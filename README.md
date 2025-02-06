@@ -133,3 +133,43 @@ npm start
 The app will run on: http://localhost:5176/
 
 
+# 📌 Milestone 3: Backend Setup & Folder Structure
+
+In this milestone, we focused on structuring the backend, setting up the server, connecting to MongoDB, and implementing basic error handling.
+
+---
+
+## 🚀 Key Features
+
+### ✅ **Backend Folder Structure**
+A well-organized backend directory following MVC (Model-View-Controller) architecture:
+
+
+### ✅ **Server Setup**
+- Configured a backend server using **Node.js** and **Express.js**.
+- Implemented a **REST API** with Express routes.
+- Server listens on a designated port and handles requests efficiently.
+
+### ✅ **MongoDB Integration**
+- Connected the backend to **MongoDB** using Mongoose.
+- Established a **database connection** to handle product and user data.
+- Created Mongoose models for structured data storage.
+
+### ✅ **Error Handling**
+- Implemented a centralized error-handling system in `utils/errorHandler.js`.
+- Provided **clear error messages** to improve debugging and user feedback.
+
+---
+
+## 📌 Installation & Setup
+
+Follow these steps to run the backend:
+
+### **1️⃣ Install Dependencies**
+Ensure you have Node.js installed, then run:
+```sh
+cd backend
+npm install
+
+MONGO_URI=mongo_url=mongodb+srv://<mahilmithranks2007>:<7sq1vEBWhnMvthUL>@cluster0.pwy6w.mongodb.net/kalvium-e_commerce?retryWrites=true&w=majority&appName=Cluster0
+PORT=5000

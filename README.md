@@ -173,3 +173,51 @@ npm install
 
 MONGO_URI=mongo_url=mongodb+srv://<mahilmithranks2007>:<7sq1vEBWhnMvthUL>@cluster0.pwy6w.mongodb.net/kalvium-e_commerce?retryWrites=true&w=majority&appName=Cluster0
 PORT=5000
+
+
+## 📌 Milestone 4: Creating User Model and Controller
+
+### 🚀 Key Features
+
+#### ✅ **User Model**
+- Created a Mongoose schema and model for users.
+- Fields include `name`, `email`, `password`, `role`, and timestamps.
+- Implemented password hashing for security.
+
+#### ✅ **User Controller**
+- Developed controllers for user registration, login, profile retrieval, and updates.
+- Implemented JWT authentication for secure access.
+- Included error handling and validation for inputs.
+
+#### ✅ **Multer Support**
+- Integrated **Multer** for handling file uploads.
+- Enabled user profile image uploads with storage configurations.
+- Implemented middleware to process image uploads efficiently.
+
+
+
+## 📌 Installation & Setup
+
+Follow these steps to run the backend:
+
+### **1️⃣ Install Dependencies**
+Ensure you have Node.js installed, then run:
+sh
+cd backend
+npm install
+
+
+### **2️⃣ Setup Environment Variables**
+Create a `.env` file in the root directory and add:
+MONGO_URI=mongodb+srv://<mahilmithranks2007>:<7sq1vEBWhnMvthUL>@cluster0.pwy6w.mongodb.net/kalvium-e_commerce?retryWrites=true&w=majority&appName=Cluster0
+PORT=5000
+JWT_SECRET=your_secret_key
+
+
+### **3️⃣ Run the Server**
+
+npm start
+The backend will run on `http://localhost:5000/`.
+
+
+

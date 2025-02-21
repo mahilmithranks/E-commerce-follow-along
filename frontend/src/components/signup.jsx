@@ -2,10 +2,14 @@ import React from 'react';
 
 const Signup = () => {
   return (
-    <div className="flex items-center justify-center h-screen bg-cover bg-center" style={{ backgroundImage: "url('https://cdn.prod.website-files.com/620e4101b2ce12a1a6bff0e8/6328643bdad13209d29b22c7_myth.png ')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
+    <div className="flex items-center justify-center h-screen bg-cover bg-center" style={{ backgroundImage: "url('https://www.mashed.com/img/gallery/30-best-ice-cream-flavors-ranked-from-worst-to-best/l-intro-1654092923.jpg')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
       <div className="bg-white bg-opacity-75 p-10 rounded-lg shadow-lg max-w-md w-full">
         <h2 className="text-2xl font-bold mb-6 text-center">Join our community</h2>
         <form>
+          <div className="mb-4">
+          <label className="block text-gray-700">Name</label>
+          <input type="Name" className="mt-1 p-2 w-full border rounded-md"/>
+          </div>
           <div className="mb-4">
             <label className="block text-gray-700">Email</label>
             <input type="email" className="mt-1 p-2 w-full border rounded-md"/>

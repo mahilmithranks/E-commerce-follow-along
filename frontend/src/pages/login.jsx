@@ -1,79 +1,87 @@
 import React, { useState } from "react";
+import { IoMdEyeOff, IoMdEye } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function Login() {
-  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
+  const handlePasswordToggle = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    try {
+      const response = await axios.post("http://localhost:8080/user/login", {
+        email,
+        password,
+      }, { withCredentials: true });
+        
+      if (response.status==200) {
+        navigate("/"); 
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || "Login failed");
+    }
   };
 
   return (
-    <div className="max-w-md mx-auto p-5 border rounded-md">
+    <div className="max-w-md mx-auto p-5 border rounded-md mt-40">
       <h2 className="text-2xl font-semibold mb-4">Login to your account</h2>
-
-      {/* Home and Login Buttons */}
-      <div className="flex justify-between mb-4">
-        <a
-          href="/"
-          className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-        >
-          Home
-        </a>
-        <a
-          href="/login"
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          Login
-        </a>
-      </div>
-
-      <form>
+      {error && <p className="text-red-500">{error}</p>}
+      <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label htmlFor="email" className="block mb-2">Email address</label>
           <input
             type="email"
             id="email"
             className="w-full p-2 border rounded"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
           />
         </div>
-        
         <div className="mb-4 relative">
           <label htmlFor="password" className="block mb-2">Password</label>
           <div className="relative">
             <input
-              type={passwordVisible ? "text" : "password"}
+              type={showPassword ? "text" : "password"}
               id="password"
               className="w-full p-2 border rounded pr-10"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
             />
             <button
               type="button"
-              onClick={togglePasswordVisibility}
-              className="absolute right-2 top-2 text-gray-600 hover:text-gray-800"
+              onClick={handlePasswordToggle}
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-600"
             >
-              {passwordVisible ? "👁️" : "🙈"}
+              {showPassword ? <IoMdEyeOff /> : <IoMdEye />}
             </button>
           </div>
         </div>
-
         <div className="mb-4 flex items-center">
           <input type="checkbox" id="rememberMe" className="mr-2" />
           <label htmlFor="rememberMe">Remember me</label>
         </div>
-
         <div className="mb-4">
           <a href="/forgot-password" className="text-blue-500">Forgot your password?</a>
         </div>
-
         <button
           type="submit"
           className="w-full p-3 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
-          Submit
+          Login
         </button>
       </form>
-
       <p className="mt-4">
         Don't have an account? <a href="/signup" className="text-blue-500">Sign up</a>
       </p>
@@ -82,3 +90,4 @@ function Login() {
 }
 
 export default Login;
+

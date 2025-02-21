@@ -4,7 +4,7 @@ A powerful and scalable backend system for managing an e-commerce platform. Buil
 
 ---
 
-## 🚀 Features
+## Features
 
 - **User Management**:
   - User registration, login, and secure authentication using JWT.
@@ -31,7 +31,7 @@ A powerful and scalable backend system for managing an e-commerce platform. Buil
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 - **Frontend Framework**: React.js  
 - **Backend Framework**: Node.js + Express.js  
@@ -39,11 +39,11 @@ A powerful and scalable backend system for managing an e-commerce platform. Buil
 
 ---
 
-## 📌 Milestone 2: Frontend Setup
+## Milestone 2: Frontend Setup
 
 A simple React.js project styled with Tailwind CSS and using React Router DOM for navigation. This project demonstrates a minimal UI with a centered "Welcome to Home" text and basic routing.
 
-### 🚀 Features
+### Features
 
 - **React.js Frontend**: Fast and efficient component-based development.
 - **Tailwind CSS**: Utility-first styling for rapid UI development.
@@ -51,7 +51,7 @@ A simple React.js project styled with Tailwind CSS and using React Router DOM fo
 - **Minimalist UI**: A clean and simple layout with centered content.
 - **Fully Responsive**: Optimized for different screen sizes.
 
-### 🛠 Tech Stack
+### Tech Stack
 
 - **Frontend Framework**: React.js
 - **Styling**: Tailwind CSS
@@ -60,74 +60,112 @@ A simple React.js project styled with Tailwind CSS and using React Router DOM fo
 
 ---
 
-## 📌 Milestone 3: Backend Setup & Folder Structure
+## Milestone 3: Backend Setup & Folder Structure
 
 In this milestone, we focused on structuring the backend, setting up the server, connecting to MongoDB, and implementing basic error handling.
 
-### 🚀 Key Features
+### Key Features
 
-#### ✅ **Backend Folder Structure**
+#### **Backend Folder Structure**
 A well-organized backend directory following MVC (Model-View-Controller) architecture.
 
-#### ✅ **Server Setup**
+#### **Server Setup**
 - Configured a backend server using **Node.js** and **Express.js**.
 - Implemented a **REST API** with Express routes.
 - Server listens on a designated port and handles requests efficiently.
 
-#### ✅ **MongoDB Integration**
+#### **MongoDB Integration**
 - Connected the backend to **MongoDB** using Mongoose.
 - Established a **database connection** to handle product and user data.
 - Created Mongoose models for structured data storage.
 
-#### ✅ **Error Handling**
+#### **Error Handling**
 - Implemented a centralized error-handling system in `utils/errorHandler.js`.
 - Provided **clear error messages** to improve debugging and user feedback.
 
 ---
 
-## 📌 Milestone 4: Creating User Model and Controller
+## Milestone 4: Creating User Model and Controller
 
-### 🚀 Key Features
+### Key Features
 
-#### ✅ **User Model**
+#### **User Model**
 - Created a Mongoose schema and model for users.
 - Fields include `name`, `email`, `password`, and `role`.
 - Implemented password hashing for security.
 - Added timestamps for record tracking.
 
-#### ✅ **User Controller**
+#### **User Controller**
 - Developed controllers for user registration, login, and profile retrieval.
 - Implemented JWT authentication for secure access.
 - Included error handling and input validation.
 
-#### ✅ **Multer Support**
+#### **Multer Support**
 - Integrated Multer for handling file uploads.
 - Enabled user profile image uploads with storage configurations.
 - Implemented middleware to process image uploads efficiently.
 
 ---
 
-## 📌 Installation & Setup
+## Milestone 5: Frontend Development - User Registration
+
+### Key Accomplishments:
+- Designed the frontend UI for user registration.
+- Implemented input validation for fields like email and password to ensure data integrity.
+- Documented progress and updates in the README file.
+
+### The Sign-Up Page:
+The Sign-Up Page allows users to enter their details to create an account. This page includes essential input fields such as:
+
+- Name
+- Email
+- Password
+
+Users provide their information, which is then submitted to the server for processing. The goal was to create a simple, clean, and user-friendly sign-up form that enhances the registration experience.
+
+### Steps for Milestone 5:
+In this milestone, we focused on frontend development with guidance from a mentor, covering:
+
+- Building the Sign-Up Page using HTML, CSS, and JavaScript.
+- Adding form validation to ensure users input valid data before submission.
+- Enhancing user experience with clear error messages and input feedback.
+
+---
+
+## Milestone 6: Secure User Authentication
+
+### Key Features:
+
+#### **Encrypt the Password:**
+- Used `bcrypt` to hash the user's password during signup.
+- Saved the hashed password in the database instead of plain text.
+
+#### **Store Complete User Data:**
+- Saved all user details (e.g., name, email, etc.) in the database.
+- Ensured the password remains encrypted for security.
+
+---
+
+## Installation & Setup
 
 Follow these steps to run the backend:
 
-### **1️⃣ Install Dependencies**
+### **1 Install Dependencies**
 Ensure you have Node.js installed, then run:
 ```sh
 cd backend
 npm install
 ```
 
-### **2️⃣ Setup Environment Variables**
+### **2️ Setup Environment Variables**
 Create a `.env` file in the root directory and add:
 ```sh
-
 MONGO_URI=mongo_url=mongodb+srv://<mahilmithranks2007>:<7sq1vEBWhnMvthUL>@cluster0.pwy6w.mongodb.net/kalvium-e_commerce?retryWrites=true&w=majority&appName=Cluster0
 PORT=5000.
 JWT_SECRET=your_secret_key
 ```
 
-### **3️⃣ Run the Server**
+### **3️ Run the Server**
 ```sh
 npm start
 ```

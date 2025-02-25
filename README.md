@@ -187,4 +187,18 @@ cd ecommerce-follow-along
 
 ---
 
+## Milestone 10: Product Schema & API Endpoint
+
+### Overview
+
+In this milestone, we defined the product schema using Mongoose and created a POST API endpoint to validate and save product details in MongoDB.
+
+### Learning Goals
+
+By the end of this milestone, you will:
+
+- Learn how to write a Mongoose schema for products.
+- Implement data validation to ensure only valid data is saved.
+- Create a POST API endpoint to receive and store product data in MongoDB.
+- Understand the importance of data integrity and validation.
 

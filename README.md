@@ -165,61 +165,26 @@ In this milestone, we focused on frontend development with guidance from a mento
 
 ---
 
-## Milestone 7: Backend Endpoint for User Login
+## Milestone 9: Product Input Form
 
-### Learning Goals
+### Overview
 
-By the end of this milestone, you will:
+In this milestone, we created a product input form that allows users to enter product details and upload multiple images. The form ensures data validation and previews images before submission.
 
-- Understand how to validate user credentials during login.
-- Learn how to compare the encrypted password with the user’s input.
+### Features
 
-### Why Encrypt Passwords?
+- User-friendly product input form
+- Multiple image uploads with previews
+- Real-time validation for form fields
 
-- **Protect User Data**: Keeps passwords safe even if the database is compromised.
-- **Privacy**: Ensures passwords aren’t stored in plain text.
-- **Compliance**: Meets security standards like GDPR and PCI-DSS.
-- **Prevents Password Theft**: Hashed passwords are difficult to decipher, increasing security.
+### Installation & Usage
 
-### How Login Authentication Works
-
-1. **User Enters Credentials**:
-
-   - The user provides their email/username and password on the login page.
-
-2. **Fetch User Data from Database**:
-
-   - The backend retrieves the user record based on the provided email/username.
-   - If the user is not found, return an error: "User does not exist."
-
-3. **Compare Encrypted Passwords**:
-
-   - Process the user's input password using the same hashing algorithm (e.g., bcrypt).
-   - Compare the resulting hash to the stored hashed password.
-   - If they match, the user is authenticated; if not, send an error.
+Clone the repository:
+```sh
+git clone YOUR_REPOSITORY_LINK
+cd ecommerce-follow-along
+```
 
 ---
 
-## Milestone 8: Creating and Displaying Card Components
-
-### Learning Goals
-
-By the end of this milestone, you will:
-
-- Learn how to create a card component.
-- Learn how to display those cards on the products page.
-
-### Why Create Card Components?
-
-- **Showcase Products Effectively**: Presents product details in a clear and visually appealing way.
-- **Reusable Design**: Can be used across multiple pages or sections of the app.
-- **Improved User Experience**: Makes it easy for users to browse and interact with products.
-- **Organized Layout**: Keeps the homepage clean and structured.
-
-### How to Display a Single Card for Multiple Products?
-
-- **Create a Dynamic Component**: Design a single card component that accepts product details as props.
-- **Use Mapping**: Use array mapping to iterate over the product list and render a card for each product.
-- **Pass Data Dynamically**: Pass unique product information (e.g., name, price, image) to each card.
-- **Maintain Consistency**: Ensure the layout remains uniform for all products.
 

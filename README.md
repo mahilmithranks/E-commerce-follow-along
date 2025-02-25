@@ -200,38 +200,26 @@ By the end of this milestone, you will:
 
 ---
 
-## Installation & Setup
+## Milestone 8: Creating and Displaying Card Components
 
-Follow these steps to run the backend:
+### Learning Goals
 
-### **1 Install Dependencies**
+By the end of this milestone, you will:
 
-Ensure you have Node.js installed, then run:
+- Learn how to create a card component.
+- Learn how to display those cards on the products page.
 
-```sh
-cd backend
-npm install
-```
+### Why Create Card Components?
 
-### **2️ Setup Environment Variables**
+- **Showcase Products Effectively**: Presents product details in a clear and visually appealing way.
+- **Reusable Design**: Can be used across multiple pages or sections of the app.
+- **Improved User Experience**: Makes it easy for users to browse and interact with products.
+- **Organized Layout**: Keeps the homepage clean and structured.
 
-Create a `.env` file in the root directory and add:
+### How to Display a Single Card for Multiple Products?
 
-```sh
-MONGO_URI=mongo_url=mongodb+srv://<mahilmithranks2007>:<7sq1vEBWhnMvthUL>@cluster0.pwy6w.mongodb.net/kalvium-e_commerce?retryWrites=true&w=majority&appName=Cluster0
-PORT=5000.
-JWT_SECRET=your_secret_key
-```
-
-### **3️ Run the Server**
-
-```sh
-npm start
-```
-
-The backend will run on `http://localhost:5000/`.
-
----
-
-Ensure all changes are committed and pushed to your GitHub repository. Share the repository link as required.
+- **Create a Dynamic Component**: Design a single card component that accepts product details as props.
+- **Use Mapping**: Use array mapping to iterate over the product list and render a card for each product.
+- **Pass Data Dynamically**: Pass unique product information (e.g., name, price, image) to each card.
+- **Maintain Consistency**: Ensure the layout remains uniform for all products.
 

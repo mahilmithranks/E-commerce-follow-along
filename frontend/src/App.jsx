@@ -1,22 +1,30 @@
-import React from 'react';
+import { useState } from 'react'
+import reactLogo from './assets/react.svg'
+import viteLogo from '/vite.svg'
 import {BrowserRouter,Routes,Route} from "react-router-dom"
-import Home from './pages/home';
-import Login from './pages/login';
-import Navbar from './pages/Navbar';
-import Signup
- from './pages/signup';
+import './App.css'
+import Login from './pages/login'
+import Home from './pages/home'
+import Navbar from './pages/Navbar'
+import Createproudct from './components/Createproduct'
 function App() {
+  
+
   return (
-     <BrowserRouter>
+    <>
+      <BrowserRouter>
         <Navbar/>
        <Routes>
             <Route  path="/"  element={<Home/>}/>
             <Route path="/login" element={<Login/>}/>
-            <Route path="/signup" element={<Signup/>}/>
+            <Route path="/create" element={<Createproudct/>}></Route>
 
        </Routes>
      </BrowserRouter>
-  );
+
+
+    </>
+  )
 }
 
-export default App;
+export default App

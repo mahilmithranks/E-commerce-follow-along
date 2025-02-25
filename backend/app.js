@@ -1,12 +1,10 @@
-
-
 const express= require("express")
 const cors =require('cors')
 const app=express()
 app.use(express.json())
 
 app.use(cors({
-    origin:"http://localhost:5174",
+    origin:"*",
     credentials:true,
     allowedHeaders:["Content-Type","Authorization"]
 }))
@@ -15,10 +13,11 @@ app.use(cors({
 const{catchAsyncError} =require("./middleware/catchAsyncError")
 const {ErrorHandler} =require("./utils/errorHandler")
 const errMiddleware =require("./middleware/error")
-const userRouter=require("../Back-end/controllers/userRoute")
+const userRoute = require("./controllers/userRoute"); 
 
 
-app.use("/user",userRouter)
+
+app.use("/user",userRoute)
 
 
 

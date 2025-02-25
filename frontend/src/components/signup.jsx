@@ -1,32 +1,174 @@
-import React from 'react';
+import React, { useState } from "react";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
+import axios from "axios";
 
-const Signup = () => {
+function Signup(props) {
+  let [hide, setHide] = useState(true);
+  let [hided, setHided] = useState(true);
+  let [err, setErr] = useState("");
+
+  const handleHide = () => {
+    setHide(!hide);
+  };
+  const handleHided = () => {
+    setHided(!hided);
+  };
+
+  const [data, setData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmpass: "",
+  });
+
+  const handleForm = (e) => {
+    setData({ ...data, [e.target.name]: e.target.value });
+    console.log(data);
+  };
+
+  const handleSubmit = async () => {
+    const { name, email, password, confirmpass } = data;
+    if (password !== confirmpass) {
+      setErr("Passwords do not match");
+      return;
+    }
+    if (!name || !email || !password || !confirmpass) {
+      setErr("Please fill all fields");
+      return;
+    }
+
+    try {
+      await axios
+        .post("http://localhost:6352/user/signup", {
+          name,
+          email,
+          password,
+        })
+        .then((response) => console.log(response.data));
+      console.log("Successfully registered");
+    } catch (error) {
+      console.log(error);
+      setErr(resizeBy.data.message);
+    }
+  };
+
   return (
-    <div className="flex items-center justify-center h-screen bg-cover bg-center" style={{ backgroundImage: "url('https://www.mashed.com/img/gallery/30-best-ice-cream-flavors-ranked-from-worst-to-best/l-intro-1654092923.jpg')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
-      <div className="bg-white bg-opacity-75 p-10 rounded-lg shadow-lg max-w-md w-full">
-        <h2 className="text-2xl font-bold mb-6 text-center">Join our community</h2>
-        <form>
-          <div className="mb-4">
-          <label className="block text-gray-700">Name</label>
-          <input type="Name" className="mt-1 p-2 w-full border rounded-md"/>
+    <>
+      <div className="flex justify-center items-center min-h-screen bg-gray-100">
+        <div className="w-full sm:w-[400px] bg-white p-8 rounded-lg shadow-md">
+          <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
+            Create an Account
+          </h1>
+
+          {err && (
+            <div className="bg-red-200 text-red-800 p-2 rounded-md mb-4 text-center">
+              {err}
+            </div>
+          )}
+
+          <label htmlFor="name" className="block text-gray-600 font-medium mb-2">
+            Name
+          </label>
+          <input
+            id="name"
+            name="name"
+            type="text"
+            value={data.name}
+            onChange={handleForm}
+            className="w-full p-3 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+
+          <label htmlFor="email" className="block text-gray-600 font-medium mb-2">
+            Email address
+          </label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            value={data.email}
+            onChange={handleForm}
+            className="w-full p-3 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+
+          <label htmlFor="password" className="block text-gray-600 font-medium mb-2">
+            Password
+          </label>
+          <div className="relative">
+            <input
+              id="password"
+              name="password"
+              type={hide ? "password" : "text"}
+              value={data.password}
+              onChange={handleForm}
+              className="w-full p-3 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button
+              type="button"
+              onClick={handleHide}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+            >
+              {hide ? (
+                <FaRegEye size={20} />
+              ) : (
+                <FaRegEyeSlash size={20} />
+              )}
+            </button>
           </div>
-          <div className="mb-4">
-            <label className="block text-gray-700">Email</label>
-            <input type="email" className="mt-1 p-2 w-full border rounded-md"/>
+
+          <label htmlFor="confirmpass" className="block text-gray-600 font-medium mb-2">
+            Confirm Password
+          </label>
+          <div className="relative">
+            <input
+              id="confirmpass"
+              name="confirmpass"
+              type={hided ? "password" : "text"}
+              value={data.confirmpass}
+              onChange={handleForm}
+              className="w-full p-3 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button
+              type="button"
+              onClick={handleHided}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+            >
+              {hided ? (
+                <FaRegEye size={20} />
+              ) : (
+                <FaRegEyeSlash size={20} />
+              )}
+            </button>
           </div>
-          <div className="mb-4">
-            <label className="block text-gray-700">Password</label>
-            <input type="password" className="mt-1 p-2 w-full border rounded-md"/>
+
+          <div className="flex justify-between items-center mb-4">
+            <div className="flex items-center">
+              <input type="checkbox" id="remember" className="mr-2" />
+              <label htmlFor="remember" className="text-gray-600">Remember me</label>
+            </div>
           </div>
-          <div className="mb-6">
-            <label className="block text-gray-700">Confirm Password</label>
-            <input type="password" className="mt-1 p-2 w-full border rounded-md"/>
+
+          <button
+            type="button"
+            onClick={handleSubmit}
+            className="w-full p-3 bg-blue-600 text-white font-semibold rounded-md mb-4 hover:bg-blue-700 transition"
+          >
+            Signup
+          </button>
+
+          <div className="text-center">
+            <p className="text-gray-600">
+              Already have an account?{" "}
+              <span
+                onClick={props.x}
+                className="text-blue-600 cursor-pointer hover:underline"
+              >
+                Login
+              </span>
+            </p>
           </div>
-          <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded-md">Sign Up</button>
-        </form>
-        {/* <p className="text-center mt-4">And learn every day with our tips and daily challenges.</p> */}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

@@ -1,178 +1,131 @@
-const express=require('express')
-const {UserModel}=require('UserModel')
-const bcrypt =require('bcrypt')
-const userRouter=express.Router()
-const{catchAsyncError} =require("../middleware/catchAsyncError")
-const {ErrorHandler} =require("../utils/errorHandler")
-const {sendMail}=require("../utils/mail")
+let express = require("express");
+const UserModel = require("../model/userModel");
+const catchAsyncError = require("../middleware/catchAsyncError");
+const Errorhadler = require("../utils/errorHandler");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const { sendMail } = require("../utils/mail");
+let userRoute = express.Router();
+const { upload } = require("../middleware/multer");
 
-userRouter.post("/signup",catchAsyncError(async(req,res)=>{
+userRoute.post(
+  "/signup",
+  catchAsyncError(async (req, res, next) => {
+    console.log(req.body);
 
-      
-           const{name,email,password}= req.body
-            if(!name || !email || !password){
-              next(new ErrorHandler("requried",400))
-            }
-            let user=UserModel.findOne({email})
-            if(user){
-                next(new ErrorHandler("user is already signed, go with login",200))
-            }
-            
-            bcrypt.hash(password, 5, async(err, hash) =>{
-                 if(err)
-                 {const express=require('express')
-                  const {UserModel}=require("../models/useModel")
-                  const bcrypt =require('bcrypt')
-                  require('dotenv').config()
-                  const{catchAsyncError} =require("../middleware/catchAsyncError")
-                  const {ErrorHandler} =require("../utils/errorHandler")
-                  const {sendMail}=require("../utils/mail")
-                  const jwt=require("jsonwebtoken")
-                  const upload =require("../middleware/multer")
-                  const userRouter=express.Router()
-                  
-                  userRouter.post("/signup",catchAsyncError(async(req,res,next)=>{
-                  
-                        
-                             const{name,email,password}= req.body
-                              if(!name || !email || !password){
-                                next(new ErrorHandler("requried",400))
-                              }
-                              let user= await UserModel.findOne({email})
-                              if(user){
-                                  next(new ErrorHandler("user is already signed, go with login",200))
-                              }
-                              
-                              bcrypt.hash(password, 5, async(err, hash) =>{
-                                   if(err)
-                                   {
-                                      next(new ErrorHandler("internal server error",500))
-                                   }
-                  
-                                   let newuser=new UserModel({email,name,password:hash})
-                  
-                                  
-                  
-                                   let token=jwt.sign({id:newuser._id}, process.env.secrete, { expiresIn: 60 * 60*60*10 });
-                  
-                                   let activation_url=`http://localhost:${process.env.PORT}/user/activation/${token}`
-                  
-                                    await sendMail(
-                                      {
-                                        email:newuser.email,
-                                        subject:"Activate your account",
-                                        message:`Hello ${newuser.name},please click on the link to activate your acccount: ${activation_url}`,
-                                      }
-                                    )
-                                    await newuser.save()
-                  
-                                    res.status(200).json({status:true,message:"registration successfull please activate your account"})
-                                   
-                              });
-                  
-                       
-                  }))
-                  
-                  
-                  userRouter.get("/activation/:token",catchAsyncError(async(req,res,next)=>{
-                          
-                            let token=req.params.token
-                            if(!token){
-                                  next(new ErrorHandler("token not found",404))
-                            }
-                             jwt.verify(token,process.env.secrete,async(err,decoded)=>{
-                                   if(err){
-                                        next(new ErrorHandler("token is not valid", 400))
-                                   }
-                                   let id=decoded.id
-                  
-                                   await UserModel.findByIdAndUpdate(id,{isActivated:true})
-                  
-                                   res.status(200).json({message:"is Activated"})
-                             })
-                  
-                  }))
-                  
-                  
-                  userRouter.post("/upload",upload.single("photo"),catchAsyncError(async(req,res,next)=>{
-                        
-                         if(!req.file){
-                          next(new ErrorHandler("File not found",400))
-                         }
-                  
-                         res.status(200).json("File uploaded Sucessfuly")
-                  }))
-                  
-                  
-                  userRouter.post('/login',catchAsyncError(async(req,res,next)=>{
-                         
-                        const {email,password}=req.body;
-                  
-                        if(!email || !password)
-                        {
-                              next(new ErrorHandler("email and password is required",400))
-                        }
-                        
-                         let user=await UserModel.findOne({email})
-                  
-                         if(!user)
-                         {
-                            return  next(new ErrorHandler("please signup before login",400));
-                         }
-                         if(!user.isActivated)
-                         {
-                             return next(new ErrorHandler("please activate before login",400));
-                         }
-                  
-                         bcrypt.compare(password, user.password, function(err, result) {
-                            if(err){
-                                return next(new ErrorHandler("internal server error",500)); 
-                            }
-                            if(!result){
-                                return next(new ErrorHandler("password is incorrect",400));
-                            }
-                              console.log(result)
-                            let token =jwt.sign({id:user._id},process.env.ACCESS,{expiresIn: 60*60*60*60*24*30})
-                        
-                            res.cookie("accesstoken",token,{
-                                 httpOnly:true,
-                                 MaxAge:"7d"
-                            })
-                     
-                            res.status(200).json({status:true,message:"login successful"})
-                            
-                        });
-                  
-                  
-                  
-                        
-                  }))
-                  
-                  
-                  module.exports=userRouter
-                    next(new ErrorHandler("internal server error",500))
-                 }
+    const { name, email, password } = req.body;
 
-                 let newuser=new UserModel({email,name,password:hash})
+    if (!email || !password || !name) {
+      next(new Errorhadler("name,email and password required", 400));
+    }
+    let user = await UserModel.findOne({ email: email });
+    if (user) {
+      next(new Errorhadler("user is already exist..........", 400));
+    }
 
-                
+    bcrypt.hash(password, 5, async (err, hash) => {
+      if (err) {
+        next(new Errorhadler("server error", 500));
+      }
+      let newUser = new UserModel({ name, email, password: hash });
 
-                 let token=jwt.sign({id:newuser._id}, process.env.secrete, { expiresIn: 60 * 60*60*10 });
+      let token = jwt.sign({ id: newUser._id }, process.env.SECRET, {
+        expiresIn: 60 * 60 * 60 * 60860,
+      });
+      let PORT = process.env.PORT;
+      let activation_url = `http://localhost:${PORT}/user/activation/${token}`;
+      try {
+        await sendMail({
+          email: newUser.email,
+          subject: "Activate your account",
+          message: `Hello ${newUser.name},please click the link to activate your account:${activation_url}`,
+        });
+        await newUser.save();
+        res
+          .status(200)
+          .json({ status: true, message: "registration sucessfull" });
+      } catch (error) {
+        next(new Errorhadler("internal server error", 500));
+        console.log(error);
+      }
+    });
+  })
+);
 
-                 let activation_url=`http://localhost:8052/user/activation/${token}`
+userRoute.get(
+  "/activation/:token",
+  catchAsyncError(async (req, res, next) => {
+    let token = req.params.token;
+    if (!token) {
+      next(new Errorhadler("token not found", 404));
+    }
+    jwt.verify(token, process.env.SECRET, async (err, decoded) => {
+      if (err) {
+        next(new Errorhadler("token is not valid", 400));
+      }
 
-                  await sendMail(
-                    {
-                      email:newuser.email,
-                      subject:"Activate your account",
-                      message:`Hello ${newuser.name},please click on the link to activate your acccount: ${activation_url}`,
-                    }
-                  )
-                  await newuser.save()
+      let id = decoded.id;
+      await UserModel.findByIdAndUpdate(id, { isActivated: true });
 
-                  res.status(200).json({status:true,message:"registration successfull please activate your account"})
-                 
-          });
+      res.redirect("http://localhost:5173/login");
 
+      res
+        .status(200)
+        .json({ status: true, message: "activation is completed" });
+    });
+  })
+);
 
-}))
+userRoute.post(
+  "/upload",
+  upload.single("photo"),
+  catchAsyncError(async (req, res, next) => {
+    if (!req.file) {
+      next(new Errorhadler("File not found", 400));
+    }
+
+    res.status(200).json("Uploaded");
+  })
+);
+
+userRoute.post(
+  "/login",
+  catchAsyncError(async (req, res, next) => {
+    const { email, password } = req.body;
+    console.log(email);
+    if (!email || !password) {
+      next(new Errorhadler("email and password are reqires", 400));
+    }
+
+    let user = await UserModel.findOne({ email });
+    console.log(user, "9999999999999");
+
+    if (!user) {
+      next(new Errorhadler("Please Signup", 400));
+    }
+
+    if (!user.isActivated) {
+      next(new Errorhadler("Please Signup", 400));
+    }
+
+    await bcrypt.compare(password, user.password, function (err, result) {
+      if (err) {
+        next(new Errorhadler("internal server error", 500));
+      }
+      if (!result) {
+        next(new Errorhadler("password is incorrect", 400));
+      }
+
+      let token = jwt.sign({ id: user._id }, process.env.SECRET, {
+        expiresIn: 60 * 60 * 60 * 24 * 30,
+      });
+      res.cookie("accesstoken", token, {
+        httpOnly: true,
+        MaxAge: "5d",
+      });
+      res.status(200).json({ status: true, message: "login successful" });
+    });
+  })
+);
+
+module.exports = userRoute ;

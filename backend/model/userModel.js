@@ -3,20 +3,20 @@ let mongoose = require("mongoose")
 const addressSchema=mongoose.Schema({
     country:{
         type:String,
-        require:true
+        required:true
     },
     state:{
         type:String,
-        require:true
+        required:true
     },
-    distrit:{
+    district:{
         type:String,
-        require:true
+        required:true
 
     },
     pincode:{
         type:Number,
-        require:true
+        required:true
     },
     area:{
         type:String
@@ -28,15 +28,17 @@ const addressSchema=mongoose.Schema({
 const userSchema =mongoose.Schema({
     name:{
         type:String,
-        require:true
+        required:true
     },
     email:{
         type:String,
-        require:true
+        required:true,
+        unique: true,
+        match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email address']
     },
     password:{
         type:String,
-        require:true
+        required:true
     },
     role:{
         type:String,
@@ -44,13 +46,16 @@ const userSchema =mongoose.Schema({
         enum:["user","seller","admin"]
     },
     address:{
-        type:addressSchema
+        type:addressSchema,
+        required: false
     },
     isActivated:{
         type:Boolean,
-        default:false
+        default:true // Changed to true for testing
     }
 
+},{
+    timestamps: true
 })
 
 

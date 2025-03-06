@@ -8,6 +8,11 @@ const { sendMail } = require("../utils/mail");
 const userRoute = express.Router();
 const { upload } = require("../middleware/multer");
 
+// Health check endpoint
+userRoute.get("/health", (req, res) => {
+  res.status(200).json({ status: true, message: "User service is healthy" });
+});
+
 userRoute.post(
   "/signup",
   catchAsyncError(async (req, res, next) => {
@@ -33,12 +38,17 @@ userRoute.post(
 
       await newUser.save();
 
-      res.status(200).json({ 
+      res.status(201).json({ 
         status: true, 
-        message: "Registration successful" 
+        message: "Registration successful",
+        user: {
+          name: newUser.name,
+          email: newUser.email
+        }
       });
     } catch (error) {
-      return next(new ErrorHandler("Registration failed", 500));
+      console.error("Registration error:", error);
+      return next(new ErrorHandler("Registration failed: " + error.message, 500));
     }
   })
 );
@@ -48,22 +58,16 @@ userRoute.get(
   catchAsyncError(async (req, res, next) => {
     let token = req.params.token;
     if (!token) {
-      next(new ErrorHandler("token not found", 404));
+      return next(new ErrorHandler("Token not found", 404));
     }
-    jwt.verify(token, process.env.SECRET, async (err, decoded) => {
-      if (err) {
-        next(new ErrorHandler("token is not valid", 400));
-      }
 
-      let id = decoded.id;
-      await UserModel.findByIdAndUpdate(id, { isActivated: true });
-
+    try {
+      const decoded = jwt.verify(token, process.env.SECRET);
+      await UserModel.findByIdAndUpdate(decoded.id, { isActivated: true });
       res.redirect("http://localhost:5173/login");
-
-      res
-        .status(200)
-        .json({ status: true, message: "activation is completed" });
-    });
+    } catch (error) {
+      return next(new ErrorHandler("Invalid or expired token", 400));
+    }
   })
 );
 
@@ -108,8 +112,11 @@ userRoute.post(
       expiresIn: "30d",
     });
 
+    // Set cookie with SameSite and Secure options
     res.cookie("token", token, {
       httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
     });
 

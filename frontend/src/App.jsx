@@ -1,28 +1,28 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import {BrowserRouter,Routes,Route} from "react-router-dom"
+import {BrowserRouter, Routes, Route} from "react-router-dom"
 import './App.css'
 import Login from './pages/login'
 import Home from './pages/home'
 import Navbar from './pages/Navbar'
-import Createproudct from './components/Createproduct'
-function App() {
-  
+import Createproduct from './components/Createproduct'
+import MyProducts from './pages/MyProducts'
+import Cart from './pages/Cart'
 
+function App() {
   return (
     <>
       <BrowserRouter>
         <Navbar/>
-       <Routes>
-            <Route  path="/"  element={<Home/>}/>
+        <div className="container mx-auto px-4 py-8">
+          <Routes>
+            <Route path="/" element={<Home/>}/>
             <Route path="/login" element={<Login/>}/>
-            <Route path="/create" element={<Createproudct/>}></Route>
-
-       </Routes>
-     </BrowserRouter>
-
-
+            <Route path="/add-product" element={<Createproduct/>}/>
+            <Route path="/my-products" element={<MyProducts/>}/>
+            <Route path="/cart" element={<Cart/>}/>
+          </Routes>
+        </div>
+      </BrowserRouter>
     </>
   )
 }

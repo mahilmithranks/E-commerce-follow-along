@@ -10,6 +10,7 @@ function Signup(props) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState({});
 
   const handleHide = () => {
     setHide(!hide);
@@ -25,27 +26,66 @@ function Signup(props) {
     confirmpass: "",
   });
 
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
+
   const handleForm = (e) => {
+    const { name, value } = e.target;
     setError("");
-    setData({ ...data, [e.target.name]: e.target.value });
+    setFieldErrors(prev => ({ ...prev, [name]: "" }));
+    setData(prev => ({ ...prev, [name]: value }));
+
+    // Real-time validation
+    if (name === 'email' && value && !validateEmail(value)) {
+      setFieldErrors(prev => ({ ...prev, email: "Please enter a valid email address" }));
+    }
+    if (name === 'password' && value && value.length < 6) {
+      setFieldErrors(prev => ({ ...prev, password: "Password must be at least 6 characters" }));
+    }
+    if (name === 'confirmpass' && value && value !== data.password) {
+      setFieldErrors(prev => ({ ...prev, confirmpass: "Passwords do not match" }));
+    }
   };
 
   const handleSubmit = async () => {
     const { name, email, password, confirmpass } = data;
+    setFieldErrors({});
+    let hasError = false;
     
     // Validation
-    if (!name || !email || !password || !confirmpass) {
-      setError("Please fill all fields");
-      return;
+    if (!name) {
+      setFieldErrors(prev => ({ ...prev, name: "Name is required" }));
+      hasError = true;
+    }
+    
+    if (!email) {
+      setFieldErrors(prev => ({ ...prev, email: "Email is required" }));
+      hasError = true;
+    } else if (!validateEmail(email)) {
+      setFieldErrors(prev => ({ ...prev, email: "Please enter a valid email address" }));
+      hasError = true;
     }
 
-    if (password !== confirmpass) {
-      setError("Passwords do not match");
-      return;
+    if (!password) {
+      setFieldErrors(prev => ({ ...prev, password: "Password is required" }));
+      hasError = true;
+    } else if (password.length < 6) {
+      setFieldErrors(prev => ({ ...prev, password: "Password must be at least 6 characters" }));
+      hasError = true;
     }
 
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters long");
+    if (!confirmpass) {
+      setFieldErrors(prev => ({ ...prev, confirmpass: "Please confirm your password" }));
+      hasError = true;
+    } else if (password !== confirmpass) {
+      setFieldErrors(prev => ({ ...prev, confirmpass: "Passwords do not match" }));
+      hasError = true;
+    }
+
+    if (hasError) {
+      setError("Please fix the errors above");
       return;
     }
 
@@ -53,14 +93,11 @@ function Signup(props) {
       setLoading(true);
       setError("");
       
-      const response = await api.post(
-        "/user/signup",
-        {
-          name,
-          email,
-          password,
-        }
-      );
+      const response = await api.post("/api/user/signup", {
+        name,
+        email,
+        password,
+      });
 
       if (response.data.status) {
         setSuccess(true);
@@ -72,12 +109,15 @@ function Signup(props) {
           password: "",
           confirmpass: "",
         });
-      } else {
-        setError(response.data.message || "Registration failed");
       }
     } catch (error) {
       console.error("Registration error:", error);
-      if (error.code === "ERR_NETWORK") {
+      if (error.response?.data?.message === "User already exists") {
+        setFieldErrors(prev => ({ 
+          ...prev, 
+          email: "This email is already registered. Please use a different email or sign in." 
+        }));
+      } else if (error.code === "ERR_NETWORK") {
         setError("Cannot connect to server. Please try again later.");
       } else {
         setError(error.response?.data?.message || "Registration failed. Please try again.");
@@ -103,7 +143,7 @@ function Signup(props) {
 
           {success && (
             <div className="bg-green-200 text-green-800 p-4 rounded-md mb-4 text-center">
-              Registration successful! Please check your email to activate your account.
+              Registration successful! You can now log in to your account.
               <button 
                 onClick={props.x}
                 className="block w-full mt-2 text-green-700 underline hover:text-green-800"
@@ -115,70 +155,98 @@ function Signup(props) {
 
           {!success && (
             <>
-              <label htmlFor="name" className="block text-gray-600 font-medium mb-2">
-                Name
-              </label>
-              <input
-                id="name"
-                name="name"
-                type="text"
-                value={data.name}
-                onChange={handleForm}
-                className="w-full p-3 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-
-              <label htmlFor="email" className="block text-gray-600 font-medium mb-2">
-                Email address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                value={data.email}
-                onChange={handleForm}
-                className="w-full p-3 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-
-              <label htmlFor="password" className="block text-gray-600 font-medium mb-2">
-                Password
-              </label>
-              <div className="relative">
+              <div className="mb-4">
+                <label htmlFor="name" className="block text-gray-600 font-medium mb-2">
+                  Name
+                </label>
                 <input
-                  id="password"
-                  name="password"
-                  type={hide ? "password" : "text"}
-                  value={data.password}
+                  id="name"
+                  name="name"
+                  type="text"
+                  value={data.name}
                   onChange={handleForm}
-                  className="w-full p-3 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    fieldErrors.name ? 'border-red-500' : 'border-gray-300'
+                  }`}
                 />
-                <button
-                  type="button"
-                  onClick={handleHide}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-                >
-                  {hide ? <FaRegEye size={20} /> : <FaRegEyeSlash size={20} />}
-                </button>
+                {fieldErrors.name && (
+                  <p className="mt-1 text-sm text-red-600">{fieldErrors.name}</p>
+                )}
               </div>
 
-              <label htmlFor="confirmpass" className="block text-gray-600 font-medium mb-2">
-                Confirm Password
-              </label>
-              <div className="relative">
+              <div className="mb-4">
+                <label htmlFor="email" className="block text-gray-600 font-medium mb-2">
+                  Email address
+                </label>
                 <input
-                  id="confirmpass"
-                  name="confirmpass"
-                  type={hided ? "password" : "text"}
-                  value={data.confirmpass}
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={data.email}
                   onChange={handleForm}
-                  className="w-full p-3 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    fieldErrors.email ? 'border-red-500' : 'border-gray-300'
+                  }`}
                 />
-                <button
-                  type="button"
-                  onClick={handleHided}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-                >
-                  {hided ? <FaRegEye size={20} /> : <FaRegEyeSlash size={20} />}
-                </button>
+                {fieldErrors.email && (
+                  <p className="mt-1 text-sm text-red-600">{fieldErrors.email}</p>
+                )}
+              </div>
+
+              <div className="mb-4">
+                <label htmlFor="password" className="block text-gray-600 font-medium mb-2">
+                  Password
+                </label>
+                <div className="relative">
+                  <input
+                    id="password"
+                    name="password"
+                    type={hide ? "password" : "text"}
+                    value={data.password}
+                    onChange={handleForm}
+                    className={`w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                      fieldErrors.password ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleHide}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                  >
+                    {hide ? <FaRegEye size={20} /> : <FaRegEyeSlash size={20} />}
+                  </button>
+                </div>
+                {fieldErrors.password && (
+                  <p className="mt-1 text-sm text-red-600">{fieldErrors.password}</p>
+                )}
+              </div>
+
+              <div className="mb-4">
+                <label htmlFor="confirmpass" className="block text-gray-600 font-medium mb-2">
+                  Confirm Password
+                </label>
+                <div className="relative">
+                  <input
+                    id="confirmpass"
+                    name="confirmpass"
+                    type={hided ? "password" : "text"}
+                    value={data.confirmpass}
+                    onChange={handleForm}
+                    className={`w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                      fieldErrors.confirmpass ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleHided}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                  >
+                    {hided ? <FaRegEye size={20} /> : <FaRegEyeSlash size={20} />}
+                  </button>
+                </div>
+                {fieldErrors.confirmpass && (
+                  <p className="mt-1 text-sm text-red-600">{fieldErrors.confirmpass}</p>
+                )}
               </div>
 
               <button

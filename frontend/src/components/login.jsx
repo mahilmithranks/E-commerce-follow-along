@@ -1,59 +1,77 @@
 import React, { useState } from "react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
-import axios from "axios";
+import api from "../utils/axios";
 import { useNavigate } from "react-router-dom";
 
 function Login(props) {
   const navigate = useNavigate();
-
   const [hide, setHide] = useState(true);
   const [error, setError] = useState("");
-  const [data, setData] = useState({
-    email: "",
-    password: "",
-  });
+  const [loading, setLoading] = useState(false);
 
   const handleHide = () => {
     setHide(!hide);
   };
 
+  const [data, setData] = useState({
+    email: "",
+    password: "",
+  });
+
   const handleForm = (e) => {
-    setError("")
+    setError("");
     setData({ ...data, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async () => {
     const { email, password } = data;
+    
+    // Validation
     if (!email || !password) {
       setError("Please fill all fields");
       return;
     }
 
     try {
-      await axios
-        .post("http://localhost:6352/user/login", {
+      setLoading(true);
+      setError("");
+      
+      const response = await api.post(
+        "/user/login",
+        {
           email,
           password,
-        })
-        .then((response) => {
-          console.log(response,"888")
-          navigate("/");
-        });
+        }
+      );
 
-      console.log("Login successful");
-      
+      if (response.data.status) {
+        // Clear form
+        setData({
+          email: "",
+          password: "",
+        });
+        navigate("/");
+      } else {
+        setError(response.data.message || "Login failed");
+      }
     } catch (error) {
-      console.log(error.response.data.message);
-      setError(error.response.data.message);
+      console.error("Login error:", error);
+      if (error.code === "ERR_NETWORK") {
+        setError("Cannot connect to server. Please try again later.");
+      } else {
+        setError(error.response?.data?.message || "Login failed. Please try again.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <>
-      <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <div className="flex justify-center items-center min-h-screen bg-neutral-800">
         <div className="w-full sm:w-[400px] bg-white p-8 rounded-lg shadow-md">
           <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
-            Login to your account
+            Welcome Back
           </h1>
 
           {error && (
@@ -67,8 +85,8 @@ function Login(props) {
           </label>
           <input
             id="email"
-            type="email"
             name="email"
+            type="email"
             value={data.email}
             onChange={handleForm}
             className="w-full p-3 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -91,30 +109,19 @@ function Login(props) {
               onClick={handleHide}
               className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
             >
-              {hide ? (
-                <FaRegEye size={20} />
-              ) : (
-                <FaRegEyeSlash size={20} />
-              )}
+              {hide ? <FaRegEye size={20} /> : <FaRegEyeSlash size={20} />}
             </button>
-          </div>
-
-          <div className="flex justify-between items-center mb-4">
-            <div className="flex items-center">
-              <input type="checkbox" id="remember" className="mr-2" />
-              <label htmlFor="remember" className="text-gray-600">Remember me</label>
-            </div>
-            <a href="#" className="text-blue-600 hover:underline text-sm">
-              Forgot password?
-            </a>
           </div>
 
           <button
             type="button"
             onClick={handleSubmit}
-            className="w-full p-3 bg-blue-600 text-white font-semibold rounded-md mb-4 hover:bg-blue-700 transition"
+            disabled={loading}
+            className={`w-full p-3 bg-blue-600 text-white font-semibold rounded-md mb-4 hover:bg-blue-700 transition ${
+              loading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
-            Login
+            {loading ? "Signing in..." : "Sign In"}
           </button>
 
           <div className="text-center">
@@ -124,7 +131,7 @@ function Login(props) {
                 onClick={props.x}
                 className="text-blue-600 cursor-pointer hover:underline"
               >
-                Sign up
+                Create one
               </span>
             </p>
           </div>

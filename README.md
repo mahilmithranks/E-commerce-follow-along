@@ -202,3 +202,214 @@ By the end of this milestone, you will:
 - Create a POST API endpoint to receive and store product data in MongoDB.
 - Understand the importance of data integrity and validation.
 
+---
+
+## Milestone 11: Product Listing Implementation
+
+### Overview
+
+In this milestone, we implemented the product listing functionality by creating a backend endpoint to fetch all products and displaying them dynamically in the frontend using components.
+
+### Key Features
+
+#### Backend Implementation
+- Created a GET endpoint `/getAllProducts` to fetch all products from MongoDB
+- Implemented proper error handling and success responses
+- Structured the API response with product data including images, descriptions, and prices
+
+#### Frontend Implementation
+- Developed dynamic product fetching using React's `useState` and `useEffect` hooks
+- Created a responsive grid layout using Tailwind CSS that adapts to different screen sizes
+- Implemented loading states for better user experience
+- Reused the ProductCard component to display product information consistently
+
+#### Technical Details
+
+- Backend endpoint returns product data in JSON format with success status
+- Frontend makes asynchronous API calls to fetch product data
+- Responsive grid layout with breakpoints:
+  - Mobile: 1 column
+  - Tablet: 2 columns
+  - Laptop: 3 columns
+  - Desktop: 4 columns
+  - Large Desktop: 5 columns
+
+#### Learning Outcomes
+- Understanding of frontend-backend data flow
+- Implementation of dynamic data rendering in React
+- Working with responsive grid layouts in Tailwind CSS
+- Proper error handling in both frontend and backend
+
+---
+
+## Milestone 12: User-Specific Product Filtering
+
+### Overview
+
+In this milestone, we implemented user-specific product filtering functionality, allowing users to view only their own products in a dedicated "My Products" page.
+
+### Key Features
+
+#### Backend Implementation
+- Created a new GET endpoint `/getUserProducts/:email` to filter products by user email
+- Implemented proper error handling and validation
+- Returns filtered products with success status
+
+#### Frontend Implementation
+- Enhanced the My Products page with dynamic product fetching
+- Reused ProductCard component for consistent product display
+- Added loading states and error handling for better UX
+- Implemented responsive grid layout matching the main product page
+- Integrated with user authentication using localStorage
+
+#### Learning Goals
+- Understanding data filtering with specific constraints
+- Implementing protected routes and user-specific content
+- Maintaining consistent UI/UX across different views
+
+---
+
+## Milestone 13: Product Update Functionality
+
+### Overview
+
+In this milestone, we implemented a comprehensive product update system that allows users to edit their existing products through a user-friendly interface.
+
+### Key Features
+
+#### Backend Implementation
+- Created PUT endpoint `/updateProduct/:id` for updating product details
+- Added validation to ensure users can only edit their own products
+- Supports updating all product fields including multiple images
+- Implements proper error handling and success responses
+
+#### Frontend Implementation
+- Created reusable `ProductForm` component for both adding and editing products
+- Added edit button to product cards in My Products page
+- Implemented `EditProduct` page with auto-filled form data
+- Added real-time image preview functionality
+- Integrated seamless navigation between viewing and editing products
+
+#### Learning Goals
+- Understanding CRUD operations in MongoDB
+- Implementing secure product ownership validation
+- Creating reusable form components
+- Managing complex form state with image uploads
+
+---
+
+## Milestone 14: Product Delete Functionality
+
+### Overview
+
+In this milestone, we implemented a secure product deletion system that allows users to remove their products with a user-friendly confirmation flow.
+
+### Key Features
+
+#### Backend Implementation
+- Created DELETE endpoint `/deleteProduct/:id` for removing products
+- Added ownership validation to ensure secure deletions
+- Implemented email-based authorization
+- Added proper error handling and success responses
+
+#### Frontend Implementation
+- Enhanced ProductCard component with delete functionality
+- Added confirmation dialog to prevent accidental deletions
+- Implemented loading states during deletion
+- Added error handling with user feedback
+- Included automatic UI refresh after successful deletion
+
+#### Learning Goals
+- Understanding DELETE operations in MongoDB
+- Implementing secure data deletion with ownership validation
+- Creating user-friendly confirmation flows
+- Managing UI states during asynchronous operations
+
+---
+
+## Milestone 15: Responsive Navigation System
+
+### Overview
+
+In this milestone, we implemented a modern, responsive navigation system that provides seamless access to all major sections of the application. The navigation system is designed to work flawlessly across all screen sizes, from mobile devices to desktop computers.
+
+### Key Features
+
+#### **Navigation Components**
+
+- Modern, responsive Navbar component
+- Mobile-friendly menu with hamburger toggle
+- Smooth transitions and animations
+
+#### **Navigation Links**
+
+The navigation system includes links to all essential pages:
+- Home - Main landing page
+- My Products - View and manage products
+- Add Product - Create new product listings
+- Cart - Shopping cart and checkout
+
+#### **Technical Implementation**
+
+- Built using React and Tailwind CSS
+- Responsive design using Tailwind's breakpoint system
+- Client-side routing with React Router
+- Component-based architecture for maintainability
+
+### Usage
+
+The navigation system is automatically included in all pages, providing consistent navigation throughout the application. The responsive design ensures:
+
+- Desktop: Full horizontal navigation menu
+- Mobile: Collapsible hamburger menu
+- Tablet: Adaptive layout based on screen width
+
+### Installation
+
+```sh
+git clone YOUR_REPOSITORY_LINK
+cd ecommerce-follow-along
+npm install
+npm run dev
+```
+
+---
+
+## Milestone 16: Product Details Page
+
+### Overview
+
+In this milestone, we implemented a comprehensive product details page that provides users with a rich, interactive view of product information, including an image gallery and detailed specifications.
+
+### Key Features
+
+#### Product Details Page
+- Interactive image gallery with navigation controls
+- Detailed product information display
+  - Product name and price
+  - Full description
+  - Category and tags
+  - Stock information
+  - Seller details
+- Responsive layout that adapts to all screen sizes
+- Loading states and error handling
+
+#### Enhanced Product Card
+- Improved navigation to product details
+- Made entire card clickable for better UX
+- Optimized button layout and interactions
+
+#### UI/UX Improvements
+- Image gallery with previous/next navigation
+- Image indicator dots for gallery navigation
+- Clean and modern design using Tailwind CSS
+- Consistent styling with the rest of the application
+
+### Learning Goals
+- Creating interactive image galleries
+- Implementing dynamic routing with parameters
+- Designing responsive layouts for detailed content
+- Managing complex component state
+- Enhancing user experience with loading states
+
+---

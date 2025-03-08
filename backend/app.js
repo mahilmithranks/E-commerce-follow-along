@@ -21,6 +21,7 @@ app.use(cookieParser());
 const errMiddleware = require("./middleware/error");
 const productRoute = require("./controllers/productroute");
 const userRoute = require("./controllers/userRoute");
+const cartRoute = require("./routes/cartRoute");
 
 // Static file serving for uploads
 app.use("/upload", express.static(path.join(__dirname, "upload")));
@@ -28,6 +29,7 @@ app.use("/upload", express.static(path.join(__dirname, "upload")));
 // Routes
 app.use("/api/products", productRoute);
 app.use("/api/user", userRoute);
+app.use("/api", cartRoute);
 
 // Error handling middleware - must be last
 app.use(errMiddleware);

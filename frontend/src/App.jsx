@@ -7,21 +7,23 @@ import Navbar from './pages/Navbar'
 import Createproduct from './components/Createproduct'
 import MyProducts from './pages/MyProducts'
 import Cart from './pages/Cart'
+import ProductDetails from './pages/ProductDetails'
+import EditProduct from './pages/EditProduct'
 
 function App() {
   return (
     <>
       <BrowserRouter>
         <Navbar/>
-        <div className="container mx-auto px-4 py-8">
-          <Routes>
-            <Route path="/" element={<Home/>}/>
-            <Route path="/login" element={<Login/>}/>
-            <Route path="/add-product" element={<Createproduct/>}/>
-            <Route path="/my-products" element={<MyProducts/>}/>
-            <Route path="/cart" element={<Cart/>}/>
-          </Routes>
-        </div>
+        <Routes>
+          <Route path="/" element={<Home/>}/>
+          <Route path="/login" element={<Login/>}/>
+          <Route path="/add-product" element={<Createproduct/>}/>
+          <Route path="/my-products" element={<MyProducts/>}/>
+          <Route path="/cart" element={<Cart/>}/>
+          <Route path="/product/:id" element={<ProductDetails/>}/>
+          <Route path="/edit-product/:id" element={<EditProduct/>}/>
+        </Routes>
       </BrowserRouter>
     </>
   )

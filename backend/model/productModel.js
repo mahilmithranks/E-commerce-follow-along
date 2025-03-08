@@ -38,5 +38,6 @@ const productSchema = mongoose.Schema({
     timestamps: true
 });
 
-const ProductModel = mongoose.model("Product", productSchema);
+// Check if model exists before creating it
+const ProductModel = mongoose.models.Product || mongoose.model("Product", productSchema);
 module.exports = ProductModel;

@@ -10,6 +10,10 @@ export default function ProductCard({ _id, name, image, description, price, show
     navigate(`/edit-product/${_id}`);
   };
 
+  const handleViewDetails = () => {
+    navigate(`/product/${_id}`);
+  };
+
   const handleDelete = async () => {
     try {
       setIsDeleting(true);
@@ -43,7 +47,7 @@ export default function ProductCard({ _id, name, image, description, price, show
   return (
     <>
       <div className="bg-white p-3 rounded-lg shadow-md transition-all transform hover:scale-105 hover:shadow-lg flex flex-col justify-between duration-300 ease-in-out max-w-xs">
-        <div className="w-full">
+        <div className="w-full cursor-pointer" onClick={handleViewDetails}>
           <img
             src={image}
             alt={name}
@@ -55,7 +59,10 @@ export default function ProductCard({ _id, name, image, description, price, show
         <div className="w-full mt-3">
           <p className="text-md font-semibold text-gray-900">${price}</p>
           <div className="flex gap-2">
-            <button className="flex-1 text-white px-4 py-1 mt-2 rounded-md bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-300 ease-in-out">
+            <button 
+              onClick={handleViewDetails}
+              className="flex-1 text-white px-4 py-1 mt-2 rounded-md bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-300 ease-in-out"
+            >
               More Info
             </button>
             {showEditButton && (

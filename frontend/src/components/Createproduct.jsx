@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { IoIosAddCircleOutline } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
+import api from '../utils/axios';
 
 function CreateProduct() {
     const navigate = useNavigate();
@@ -19,13 +20,15 @@ function CreateProduct() {
     });
 
     useEffect(() => {
-        const userEmail = localStorage.getItem('userEmail');
-        if (!userEmail) {
+        // Get user data from localStorage
+        const userData = localStorage.getItem('user');
+        if (!userData) {
             alert('Please login to add products');
             navigate('/login');
             return;
         }
-        setFormData(prev => ({ ...prev, email: userEmail }));
+        const user = JSON.parse(userData);
+        setFormData(prev => ({ ...prev, email: user.email }));
     }, [navigate]);
 
     const handleChange = (e) => {
@@ -77,19 +80,33 @@ function CreateProduct() {
         }
 
         try {
-            const response = await axios.post("http://localhost:6352/api/products/createProduct", multiPartFormData, {
+            // Get the authentication token
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('Please login to continue');
+                navigate('/login');
+                return;
+            }
+
+            const response = await api.post("/api/products/createProduct", multiPartFormData, {
                 headers: {
-                    "Content-Type": "multipart/form-data"
+                    "Content-Type": "multipart/form-data",
+                    "Authorization": `Bearer ${token}`
                 },
             });
 
-            if(response.status === 201) {
+            if(response.data.success) {
                 alert("Product Created Successfully");
                 navigate('/my-products');
             }
         } catch (error) {
             console.error("Error creating product:", error);
-            alert(error.response?.data?.message || "Failed to create product");
+            if (error.response?.status === 401) {
+                alert("Please login to create products");
+                navigate('/login');
+            } else {
+                alert(error.response?.data?.message || "Failed to create product");
+            }
         } finally {
             setLoading(false);
         }
@@ -106,7 +123,7 @@ function CreateProduct() {
                     <div>
                         <label className='block font-medium text-gray-700'>Email</label>
                         <input 
-                            className='border p-2 w-full rounded-md focus:ring-2 focus:ring-blue-500' 
+                            className='border p-2 w-full rounded-md focus:ring-2 focus:ring-blue-500 bg-gray-100' 
                             type="email" 
                             value={formData.email}
                             placeholder='Enter your email' 

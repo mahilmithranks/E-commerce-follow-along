@@ -7,11 +7,20 @@ const jwt = require("jsonwebtoken");
 const { sendMail } = require("../utils/mail");
 const userRoute = express.Router();
 const { upload } = require("../middleware/multer");
+const crypto = require('crypto');
 
 // Health check endpoint
 userRoute.get("/health", (req, res) => {
   res.status(200).json({ status: true, message: "User service is healthy" });
 });
+
+// Generate random reset token
+const generateResetToken = () => {
+  return crypto.randomBytes(3).toString('hex').toUpperCase();
+};
+
+// Store reset tokens (in production, use Redis or database)
+const resetTokens = new Map();
 
 userRoute.post(
   "/signup",
@@ -196,5 +205,121 @@ userRoute.get(
     }
   })
 );
+
+// Forgot Password
+userRoute.post("/forgot-password", catchAsyncError(async (req, res, next) => {
+  const { email } = req.body;
+
+  const user = await UserModel.findOne({ email });
+  if (!user) {
+    return next(new ErrorHandler("User not found with this email", 404));
+  }
+
+  // Generate reset token
+  const resetToken = generateResetToken();
+  
+  // Store token with expiry (15 minutes)
+  resetTokens.set(email, {
+    token: resetToken,
+    expiresAt: Date.now() + 15 * 60 * 1000 // 15 minutes
+  });
+
+  // Send reset token via email
+  const resetEmail = {
+    to: email,
+    subject: "Password Reset Verification Code",
+    html: `
+      <h1>Password Reset Request</h1>
+      <p>Your verification code is: <strong>${resetToken}</strong></p>
+      <p>This code will expire in 15 minutes.</p>
+      <p>If you didn't request this, please ignore this email.</p>
+    `
+  };
+
+  try {
+    await sendMail(resetEmail);
+    res.status(200).json({
+      success: true,
+      message: "Password reset verification code sent to your email"
+    });
+  } catch (error) {
+    resetTokens.delete(email);
+    return next(new ErrorHandler("Email could not be sent", 500));
+  }
+}));
+
+// Verify reset token
+userRoute.post("/verify-reset-token", catchAsyncError(async (req, res, next) => {
+  const { email, token } = req.body;
+
+  const resetData = resetTokens.get(email);
+  if (!resetData) {
+    return next(new ErrorHandler("Reset token has expired or is invalid", 400));
+  }
+
+  if (Date.now() > resetData.expiresAt) {
+    resetTokens.delete(email);
+    return next(new ErrorHandler("Reset token has expired", 400));
+  }
+
+  if (resetData.token !== token) {
+    return next(new ErrorHandler("Invalid reset token", 400));
+  }
+
+  res.status(200).json({
+    success: true,
+    message: "Token verified successfully"
+  });
+}));
+
+// Reset Password
+userRoute.post("/reset-password", catchAsyncError(async (req, res, next) => {
+  const { email, token, newPassword } = req.body;
+
+  const resetData = resetTokens.get(email);
+  if (!resetData || resetData.token !== token) {
+    return next(new ErrorHandler("Invalid reset token", 400));
+  }
+
+  if (Date.now() > resetData.expiresAt) {
+    resetTokens.delete(email);
+    return next(new ErrorHandler("Reset token has expired", 400));
+  }
+
+  const user = await UserModel.findOne({ email });
+  if (!user) {
+    return next(new ErrorHandler("User not found", 404));
+  }
+
+  // Hash new password
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+  user.password = hashedPassword;
+  await user.save();
+
+  // Clear used token
+  resetTokens.delete(email);
+
+  // Send confirmation email
+  const confirmationEmail = {
+    to: email,
+    subject: "Password Reset Successful",
+    html: `
+      <h1>Password Reset Successful</h1>
+      <p>Your password has been successfully reset.</p>
+      <p>If you didn't make this change, please contact support immediately.</p>
+    `
+  };
+
+  try {
+    await sendMail(confirmationEmail);
+  } catch (error) {
+    console.error("Failed to send confirmation email:", error);
+  }
+
+  res.status(200).json({
+    success: true,
+    message: "Password reset successful"
+  });
+}));
 
 module.exports = userRoute;

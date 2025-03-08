@@ -6,6 +6,7 @@ const productRouter = express.Router();
 const UserModel = require("../model/userModel");
 const mongoose = require("mongoose");
 const { productUpload } = require("../middleware/multer");
+const { isAuthenticatedUser } = require("../middleware/auth");
 
 productRouter.get("/getAllProducts", catchAsyncError(async (req, res, next) => {
   const products = await ProductModel.find();
@@ -15,7 +16,7 @@ productRouter.get("/getAllProducts", catchAsyncError(async (req, res, next) => {
   });
 }));
 
-productRouter.get("/getUserProducts/:email", catchAsyncError(async (req, res, next) => {
+productRouter.get("/getUserProducts/:email", isAuthenticatedUser, catchAsyncError(async (req, res, next) => {
   const { email } = req.params;
   if (!email) {
     return next(new Errorhadler("Email is required", 400));
@@ -30,51 +31,44 @@ productRouter.get("/getUserProducts/:email", catchAsyncError(async (req, res, ne
 
 productRouter.post(
   "/createProduct",
+  isAuthenticatedUser,
   productUpload.array("images", 10),
   catchAsyncError(async (req, res, next) => {
-    const { email, name, description, category, tags, price, stock } = req.body;
+    const { name, description, category, tags, price, stock } = req.body;
     const images = req.files.map((file) => file.path);
-    console.log(email, name, description, category, tags, price, images);
 
-    if (
-      !email ||
-      !name ||
-      !description ||
-      !category ||
-      !tags ||
-      !price ||
-      !images ||
-      !stock
-    ) {
-      next(new Errorhadler("All fields are required", 400));
+    if (!name || !description || !category || !tags || !price || !stock || !images.length) {
+      return next(new Errorhadler("All fields are required", 400));
     }
-    let user = await UserModel.findOne({ email });
-    if (!user) {
-      next(new Errorhadler("user is not exist", 404));
-    }
-    let product = new ProductModel({
-      email,
+
+    const product = new ProductModel({
+      email: req.user.email,
       name,
       description,
       category,
-      tags,
+      tags: typeof tags === 'string' ? JSON.parse(tags) : tags,
       price,
       images,
       stock,
     });
 
-    //product.images=images.map(image=>`http://localhost:8975/${image}`)
     await product.save();
-    res.status(201).json({ message: "Product created successfully" });
+    
+    res.status(201).json({ 
+      success: true,
+      message: "Product created successfully",
+      product
+    });
   })
 );
 
 productRouter.put(
   "/updateProduct/:id",
+  isAuthenticatedUser,
   productUpload.array("images", 10),
   catchAsyncError(async (req, res, next) => {
     const { id } = req.params;
-    const { email, name, description, category, tags, price, stock } = req.body;
+    const { name, description, category, tags, price, stock } = req.body;
     const images = req.files ? req.files.map((file) => file.path) : null;
 
     // Validate product exists
@@ -84,7 +78,7 @@ productRouter.put(
     }
 
     // Validate user owns the product
-    if (product.email !== email) {
+    if (product.email !== req.user.email) {
       return next(new Errorhadler("Unauthorized to update this product", 403));
     }
 
@@ -93,7 +87,7 @@ productRouter.put(
       name: name || product.name,
       description: description || product.description,
       category: category || product.category,
-      tags: tags || product.tags,
+      tags: tags ? (typeof tags === 'string' ? JSON.parse(tags) : tags) : product.tags,
       price: price || product.price,
       stock: stock || product.stock,
     };
@@ -116,27 +110,29 @@ productRouter.put(
   })
 );
 
-productRouter.delete("/deleteProduct/:id", catchAsyncError(async (req, res, next) => {
-  const { id } = req.params;
-  const { email } = req.query;
+productRouter.delete(
+  "/deleteProduct/:id", 
+  isAuthenticatedUser,
+  catchAsyncError(async (req, res, next) => {
+    const { id } = req.params;
 
-  // Validate product exists
-  const product = await ProductModel.findById(id);
-  if (!product) {
-    return next(new Errorhadler("Product not found", 404));
-  }
+    // Validate product exists
+    const product = await ProductModel.findById(id);
+    if (!product) {
+      return next(new Errorhadler("Product not found", 404));
+    }
 
-  // Validate user owns the product
-  if (product.email !== email) {
-    return next(new Errorhadler("Unauthorized to delete this product", 403));
-  }
+    // Validate user owns the product
+    if (product.email !== req.user.email) {
+      return next(new Errorhadler("Unauthorized to delete this product", 403));
+    }
 
-  await ProductModel.findByIdAndDelete(id);
+    await ProductModel.findByIdAndDelete(id);
 
-  res.status(200).json({
-    success: true,
-    message: "Product deleted successfully"
-  });
+    res.status(200).json({
+      success: true,
+      message: "Product deleted successfully"
+    });
 }));
 
 module.exports = productRouter;

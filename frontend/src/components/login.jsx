@@ -89,36 +89,49 @@ function Login(props) {
             </div>
           )}
 
-          <label htmlFor="email" className="block text-gray-600 font-medium mb-2">
-            Email address
-          </label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            value={data.email}
-            onChange={handleForm}
-            className="w-full p-3 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-
-          <label htmlFor="password" className="block text-gray-600 font-medium mb-2">
-            Password
-          </label>
-          <div className="relative">
+          <div className="mb-4">
+            <label htmlFor="email" className="block text-gray-600 font-medium mb-2">
+              Email address
+            </label>
             <input
-              id="password"
-              name="password"
-              type={hide ? "password" : "text"}
-              value={data.password}
+              id="email"
+              name="email"
+              type="email"
+              value={data.email}
               onChange={handleForm}
-              className="w-full p-3 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+          </div>
+
+          <div className="mb-2">
+            <label htmlFor="password" className="block text-gray-600 font-medium mb-2">
+              Password
+            </label>
+            <div className="relative">
+              <input
+                id="password"
+                name="password"
+                type={hide ? "password" : "text"}
+                value={data.password}
+                onChange={handleForm}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                type="button"
+                onClick={handleHide}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+              >
+                {hide ? <FaRegEye size={20} /> : <FaRegEyeSlash size={20} />}
+              </button>
+            </div>
+          </div>
+
+          <div className="text-right mb-4">
             <button
-              type="button"
-              onClick={handleHide}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+              onClick={() => navigate('/forgot-password')}
+              className="text-blue-600 text-sm hover:underline"
             >
-              {hide ? <FaRegEye size={20} /> : <FaRegEyeSlash size={20} />}
+              Forgot Password?
             </button>
           </div>
 

@@ -10,30 +10,34 @@ function MyProducts() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    fetchMyProducts();
+    checkAuthAndFetchProducts();
   }, []);
 
-  const fetchMyProducts = async () => {
+  const checkAuthAndFetchProducts = async () => {
+    const user = localStorage.getItem('user');
+    const token = localStorage.getItem('token');
+
+    if (!user || !token) {
+      navigate('/login');
+      return;
+    }
+
     try {
-      const user = JSON.parse(localStorage.getItem('user'));
-      if (!user) {
-        navigate('/login');
-        return;
-      }
-
-      const token = localStorage.getItem('token');
-      const response = await api.get(`/api/products/getUserProducts/${user.email}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
+      const userData = JSON.parse(user);
+      const response = await api.get(`/api/products/getUserProducts/${userData.email}`);
+      
       if (response.data.success) {
         setProducts(response.data.products);
       }
     } catch (error) {
       console.error('Error fetching products:', error);
-      setError('Failed to load products. Please try again later.');
+      if (error.response?.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        navigate('/login');
+      } else {
+        setError('Failed to load products. Please try again later.');
+      }
     } finally {
       setLoading(false);
     }
@@ -49,21 +53,32 @@ function MyProducts() {
     }
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await api.delete(`/api/products/deleteProduct/${productId}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await api.delete(`/api/products/deleteProduct/${productId}`);
 
       if (response.data.success) {
         setProducts(products.filter(product => product._id !== productId));
-        alert('Product deleted successfully');
+        showNotification('Product deleted successfully', 'success');
       }
     } catch (error) {
       console.error('Error deleting product:', error);
-      alert(error.response?.data?.message || 'Failed to delete product');
+      showNotification(error.response?.data?.message || 'Failed to delete product', 'error');
     }
+  };
+
+  const showNotification = (message, type = 'success') => {
+    const notification = document.createElement('div');
+    notification.className = `fixed bottom-4 right-4 ${
+      type === 'success' ? 'bg-green-500' : 'bg-red-500'
+    } text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-opacity duration-500`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+      notification.style.opacity = '0';
+      setTimeout(() => {
+        document.body.removeChild(notification);
+      }, 500);
+    }, 2500);
   };
 
   if (loading) {
@@ -112,9 +127,16 @@ function MyProducts() {
                 src={product.images[0]}
                 alt={product.name}
                 className="w-full h-48 object-cover"
+                onClick={() => navigate(`/product/${product._id}`)}
+                style={{ cursor: 'pointer' }}
               />
               <div className="p-4">
-                <h2 className="text-xl font-semibold mb-2">{product.name}</h2>
+                <h2 
+                  className="text-xl font-semibold mb-2 hover:text-blue-600 transition-colors cursor-pointer"
+                  onClick={() => navigate(`/product/${product._id}`)}
+                >
+                  {product.name}
+                </h2>
                 <p className="text-gray-600 mb-2 line-clamp-2">{product.description}</p>
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-lg font-bold text-blue-600">₹{product.price}</span>

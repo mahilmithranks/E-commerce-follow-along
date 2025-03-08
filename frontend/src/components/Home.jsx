@@ -10,6 +10,9 @@ function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [addingToCart, setAddingToCart] = useState({});
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     fetchProducts();
@@ -20,6 +23,9 @@ function Home() {
       const response = await api.get('/api/products/getAllProducts');
       if (response.data.success) {
         setProducts(response.data.products);
+        // Extract unique categories
+        const uniqueCategories = [...new Set(response.data.products.map(product => product.category))];
+        setCategories(uniqueCategories);
       }
     } catch (error) {
       console.error('Error fetching products:', error);
@@ -84,7 +90,6 @@ function Home() {
     notification.textContent = message;
     document.body.appendChild(notification);
 
-    // Fade out and remove after 3 seconds
     setTimeout(() => {
       notification.style.opacity = '0';
       setTimeout(() => {
@@ -92,6 +97,15 @@ function Home() {
       }, 500);
     }, 2500);
   };
+
+  const filteredProducts = products.filter(product => {
+    const matchesCategory = !selectedCategory || product.category === selectedCategory;
+    const matchesSearch = !searchQuery || 
+      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+    return matchesCategory && matchesSearch;
+  });
 
   if (loading) {
     return (
@@ -111,10 +125,33 @@ function Home() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">Featured Products</h1>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">Featured Products</h1>
+        
+        {/* Search and Filter */}
+        <div className="flex flex-col md:flex-row gap-4 mb-6">
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">All Categories</option>
+            {categories.map((category) => (
+              <option key={category} value={category}>{category}</option>
+            ))}
+          </select>
+        </div>
+      </div>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {products.map((product) => (
+        {filteredProducts.map((product) => (
           <div key={product._id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
             <div 
               className="relative cursor-pointer group"
@@ -204,9 +241,13 @@ function Home() {
         ))}
       </div>
 
-      {products.length === 0 && (
+      {filteredProducts.length === 0 && (
         <div className="text-center text-gray-500 mt-8">
-          No products available at the moment.
+          {searchQuery || selectedCategory ? (
+            <p>No products found matching your criteria.</p>
+          ) : (
+            <p>No products available at the moment.</p>
+          )}
         </div>
       )}
     </div>

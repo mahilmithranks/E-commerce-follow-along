@@ -13,8 +13,11 @@ const api = axios.create({
 // Add request interceptor
 api.interceptors.request.use(
     (config) => {
-        // Log request for debugging
-        console.log('Making request to:', config.url);
+        // Get token from localStorage
+        const token = localStorage.getItem('token');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
         return config;
     },
     (error) => {
@@ -28,6 +31,12 @@ api.interceptors.response.use(
         return response;
     },
     (error) => {
+        if (error.response?.status === 401) {
+            // If unauthorized, clear localStorage and redirect to login
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/login';
+        }
         if (error.code === "ERR_NETWORK") {
             console.error("Network Error: Server might be down or unreachable");
         } else if (error.response) {

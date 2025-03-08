@@ -38,13 +38,29 @@ userRoute.post(
 
       await newUser.save();
 
+      // Create token for automatic login after signup
+      const token = jwt.sign({ id: newUser._id }, process.env.SECRET, {
+        expiresIn: "30d",
+      });
+
+      // Set cookie
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+      });
+
       res.status(201).json({ 
         status: true, 
         message: "Registration successful",
         user: {
+          id: newUser._id,
           name: newUser.name,
-          email: newUser.email
-        }
+          email: newUser.email,
+          role: newUser.role
+        },
+        token
       });
     } catch (error) {
       console.error("Registration error:", error);
@@ -112,22 +128,72 @@ userRoute.post(
       expiresIn: "30d",
     });
 
-    // Set cookie with SameSite and Secure options
+    // Set cookie with appropriate options
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
     });
 
+    // Send response with user details
     res.status(200).json({
       status: true,
       message: "Login successful",
       user: {
+        id: user._id,
         name: user.name,
-        email: user.email
-      }
+        email: user.email,
+        role: user.role
+      },
+      token
     });
+  })
+);
+
+// Add a logout route
+userRoute.post(
+  "/logout",
+  catchAsyncError(async (req, res) => {
+    res.cookie("token", "", {
+      httpOnly: true,
+      expires: new Date(0),
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax"
+    });
+
+    res.status(200).json({
+      status: true,
+      message: "Logged out successfully"
+    });
+  })
+);
+
+// Get current user details
+userRoute.get(
+  "/me",
+  catchAsyncError(async (req, res, next) => {
+    const token = req.cookies.token;
+    
+    if (!token) {
+      return next(new ErrorHandler("Please login to access this resource", 401));
+    }
+
+    try {
+      const decoded = jwt.verify(token, process.env.SECRET);
+      const user = await UserModel.findById(decoded.id).select("-password");
+
+      if (!user) {
+        return next(new ErrorHandler("User not found", 404));
+      }
+
+      res.status(200).json({
+        status: true,
+        user
+      });
+    } catch (error) {
+      return next(new ErrorHandler("Invalid token", 401));
+    }
   })
 );
 

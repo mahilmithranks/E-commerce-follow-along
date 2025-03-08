@@ -36,21 +36,30 @@ function Login(props) {
       setLoading(true);
       setError("");
       
-      const response = await api.post(
-        "/user/login",
-        {
-          email,
-          password,
-        }
-      );
+      const response = await api.post("/api/user/login", {
+        email,
+        password,
+      });
 
       if (response.data.status) {
+        // Store user data in localStorage
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        localStorage.setItem('token', response.data.token);
+
         // Clear form
         setData({
           email: "",
           password: "",
         });
-        navigate("/");
+
+        // Redirect based on role
+        if (response.data.user.role === 'admin') {
+          navigate('/admin');
+        } else if (response.data.user.role === 'seller') {
+          navigate('/seller');
+        } else {
+          navigate('/');
+        }
       } else {
         setError(response.data.message || "Login failed");
       }

@@ -48,7 +48,7 @@ userRoute.post(
       await newUser.save();
 
       // Create token for automatic login after signup
-      const token = jwt.sign({ id: newUser._id }, process.env.SECRET, {
+      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
         expiresIn: "30d",
       });
 
@@ -87,7 +87,7 @@ userRoute.get(
     }
 
     try {
-      const decoded = jwt.verify(token, process.env.SECRET);
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
       await UserModel.findByIdAndUpdate(decoded.id, { isActivated: true });
       res.redirect("http://localhost:5173/login");
     } catch (error) {
@@ -133,7 +133,7 @@ userRoute.post(
       return next(new ErrorHandler("Please activate your account", 401));
     }
 
-    const token = jwt.sign({ id: user._id }, process.env.SECRET, {
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "30d",
     });
 
@@ -189,7 +189,7 @@ userRoute.get(
     }
 
     try {
-      const decoded = jwt.verify(token, process.env.SECRET);
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
       const user = await UserModel.findById(decoded.id).select("-password");
 
       if (!user) {

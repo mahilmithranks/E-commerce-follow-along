@@ -52,4 +52,32 @@ router.post('/add-to-cart', async (req, res) => {
   }
 });
 
+// Get cart products for user
+router.get('/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const cart = await Cart.findOne({ userId })
+      .populate('products.productId', 'name price images');
+
+    if (!cart) {
+      return res.status(404).json({
+        success: false,
+        message: 'Cart not found'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      cart
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch cart',
+      error: error.message
+    });
+  }
+});
+
 module.exports = router;

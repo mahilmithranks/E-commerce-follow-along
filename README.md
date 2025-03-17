@@ -422,3 +422,11 @@ In this milestone, we implemented a comprehensive product details page that prov
 - Proper error handling and success responses
 
 ---
+
+## Milestone 18: Cart Products Endpoint
+
+- Added GET endpoint `/cart/:userId` to fetch user's cart products
+- Returns product details including name, price and images
+- Proper error handling for missing carts
+
+---

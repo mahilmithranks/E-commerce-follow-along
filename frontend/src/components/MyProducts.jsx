@@ -14,24 +14,27 @@ function MyProducts() {
   }, []);
 
   const checkAuthAndFetchProducts = async () => {
-    const user = localStorage.getItem('user');
-    const token = localStorage.getItem('token');
-
-    if (!user || !token) {
-      navigate('/login');
-      return;
-    }
-
     try {
-      const userData = JSON.parse(user);
-      const response = await api.get(`/api/products/getUserProducts/${userData.email}`);
+      const userData = localStorage.getItem('user');
+      const token = localStorage.getItem('token');
+
+      if (!userData || !token) {
+        navigate('/login');
+        return;
+      }
+
+      const user = JSON.parse(userData);
+      const response = await api.get(`/api/products/getUserProducts/${user.email}`);
       
       if (response.data.success) {
         setProducts(response.data.products);
+      } else {
+        setError('Failed to fetch products');
       }
     } catch (error) {
       console.error('Error fetching products:', error);
       if (error.response?.status === 401) {
+        // Clear invalid credentials and redirect to login
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         navigate('/login');
@@ -61,7 +64,13 @@ function MyProducts() {
       }
     } catch (error) {
       console.error('Error deleting product:', error);
-      showNotification(error.response?.data?.message || 'Failed to delete product', 'error');
+      if (error.response?.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        navigate('/login');
+      } else {
+        showNotification(error.response?.data?.message || 'Failed to delete product', 'error');
+      }
     }
   };
 

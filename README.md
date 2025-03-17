@@ -413,3 +413,12 @@ In this milestone, we implemented a comprehensive product details page that prov
 - Enhancing user experience with loading states
 
 ---
+
+## Milestone 17: Cart Functionality
+
+- Implemented cart schema to store products with user reference
+- Created POST endpoint `/add-to-cart` to add products to user's cart
+- Supports adding new products and updating quantities of existing products
+- Proper error handling and success responses
+
+---

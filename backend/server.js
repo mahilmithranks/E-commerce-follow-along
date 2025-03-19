@@ -1,48 +1,54 @@
-const connectDB = require('./db/connection');
-const { app } = require('./app');
-require('dotenv').config();
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
+import userRoute from "./controllers/userRoute.js";
+import productRoute from "./controllers/productRoutes.js";
+import cartRoute from "./controllers/cartRoutes.js";
+import { connectDB } from "./db/connection.js";
 
-const port = process.env.PORT || 6352;
-const cartRoutes = require('./routes/cartRoute');
+dotenv.config();
 
-// Log environment variables for debugging (remove in production)
-console.log('MongoDB URL exists:', !!process.env.mongo_url);
+const app = express();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// Basic health check endpoint
-app.get("/api/health", async(req, res) => {
-    res.status(200).json({ status: "ok", message: "Server is running" });
-});
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.get("/testing", async(req, res) => {
-    res.send("hello");
-});
+// Static files
+app.use('/products-photo', express.static(path.join(__dirname, 'uploadproducts')));
+app.use('/profile-photo', express.static(path.join(__dirname, 'upload')));
 
-app.use('/api/cart', cartRoutes);
+// Routes
+app.use("/api/user", userRoute);
+app.use("/api/product", productRoute);
+app.use("/api/cart", cartRoute);
 
-// Global error handler
+// Error handling middleware
 app.use((err, req, res, next) => {
-    console.error('Error:', err);
-    res.status(err.status || 500).json({
-        status: false,
-        message: err.message || 'Internal server error'
+    console.error(err.stack);
+    res.status(500).json({
+        success: false,
+        message: "Something went wrong!",
+        error: err.message
     });
 });
 
-// Handle unhandled promise rejections
-process.on('unhandledRejection', (err) => {
-    console.error('Unhandled Rejection:', err);
-});
+const port = process.env.PORT || 8080;
 
 // Start server
 const startServer = async () => {
     try {
-        await connectDB(); // Connect to MongoDB
+        await connectDB();
         app.listen(port, () => {
-            console.log(`🚀 App is running on http://localhost:${port}`);
+            console.log(`Server is running on http://localhost:${port}`);
         });
     } catch (error) {
-        console.error('Failed to start server:', error);
-        process.exit(1);
+        console.error("Failed to start server:", error);
     }
 };
 

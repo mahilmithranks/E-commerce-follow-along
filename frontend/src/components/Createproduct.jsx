@@ -1,12 +1,14 @@
+import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { IoIosAddCircleOutline } from 'react-icons/io';
+import { useNavigate } from 'react-router-dom';
 import api from '../utils/axios';
 
 function CreateProduct() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
+        email: "",
         name: "",
         description: "",
         category: "",
@@ -18,14 +20,15 @@ function CreateProduct() {
     });
 
     useEffect(() => {
-        // Check authentication
+        // Get user data from localStorage
         const userData = localStorage.getItem('user');
-        const token = localStorage.getItem('token');
-        
-        if (!userData || !token) {
+        if (!userData) {
+            alert('Please login to add products');
             navigate('/login');
             return;
         }
+        const user = JSON.parse(userData);
+        setFormData(prev => ({ ...prev, email: user.email }));
     }, [navigate]);
 
     const handleChange = (e) => {
@@ -53,9 +56,9 @@ function CreateProduct() {
     const handleSubmit = async(e) => {
         e.preventDefault();
         setLoading(true);
-        const { name, description, category, tags, price, stock, images } = formData;
+        const { email, name, description, category, tags, price, stock, images } = formData;
 
-        if (!name || !description || !category || !price || !stock || !images.length) {
+        if (!email || !name || !description || !category || !price || !stock) {
             alert("Please fill in all required fields");
             setLoading(false);
             return;
@@ -68,6 +71,7 @@ function CreateProduct() {
         multiPartFormData.append("tags", JSON.stringify(tags));
         multiPartFormData.append("price", price);
         multiPartFormData.append("stock", stock);
+        multiPartFormData.append("email", email);
 
         if(Array.isArray(images)) {
             images.forEach(image => {
@@ -76,10 +80,19 @@ function CreateProduct() {
         }
 
         try {
+            // Get the authentication token
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('Please login to continue');
+                navigate('/login');
+                return;
+            }
+
             const response = await api.post("/api/products/createProduct", multiPartFormData, {
                 headers: {
-                    "Content-Type": "multipart/form-data"
-                }
+                    "Content-Type": "multipart/form-data",
+                    "Authorization": `Bearer ${token}`
+                },
             });
 
             if(response.data.success) {
@@ -89,8 +102,7 @@ function CreateProduct() {
         } catch (error) {
             console.error("Error creating product:", error);
             if (error.response?.status === 401) {
-                localStorage.removeItem('token');
-                localStorage.removeItem('user');
+                alert("Please login to create products");
                 navigate('/login');
             } else {
                 alert(error.response?.data?.message || "Failed to create product");
@@ -106,123 +118,136 @@ function CreateProduct() {
         <div className='flex justify-center items-center min-h-screen bg-cover bg-center' style={{ backgroundImage: "url('https://source.unsplash.com/1600x900/?office,technology')" }}>
             <div className='w-full max-w-lg bg-white p-6 rounded-lg shadow-lg backdrop-blur-md bg-opacity-90'>
                 <h2 className='text-2xl font-bold text-gray-800 mb-6 text-center'>Create a New Product</h2>
-                
+               
                 <form onSubmit={handleSubmit} className='space-y-4'>
                     <div>
-                        <label className='block text-gray-700 text-sm font-bold mb-2'>Product Name</label>
-                        <input
-                            type="text"
-                            name="name"
+                        <label className='block font-medium text-gray-700'>Email</label>
+                        <input 
+                            className='border p-2 w-full rounded-md focus:ring-2 focus:ring-blue-500 bg-gray-100' 
+                            type="email" 
+                            value={formData.email}
+                            placeholder='Enter your email' 
+                            name="email" 
+                            readOnly 
+                        />
+                    </div>
+
+                    <div>
+                        <label className='block font-medium text-gray-700'>Name</label>
+                        <input 
+                            className='border p-2 w-full rounded-md focus:ring-2 focus:ring-blue-500' 
+                            type="text" 
+                            placeholder='Enter product name' 
+                            name="name" 
                             value={formData.name}
-                            onChange={handleChange}
-                            className='w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500'
-                            required
+                            onChange={handleChange} 
+                            required 
                         />
                     </div>
 
                     <div>
-                        <label className='block text-gray-700 text-sm font-bold mb-2'>Description</label>
-                        <textarea
-                            name="description"
+                        <label className='block font-medium text-gray-700'>Description</label>
+                        <textarea 
+                            className='border p-2 w-full rounded-md focus:ring-2 focus:ring-blue-500 h-32' 
+                            name="description" 
                             value={formData.description}
-                            onChange={handleChange}
-                            className='w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500'
-                            rows="4"
+                            onChange={handleChange} 
+                            placeholder="Enter product description"
                             required
-                        />
+                        ></textarea>
                     </div>
 
                     <div>
-                        <label className='block text-gray-700 text-sm font-bold mb-2'>Category</label>
-                        <select
-                            name="category"
+                        <label className='block font-medium text-gray-700'>Category</label>
+                        <select 
+                            className='border p-2 w-full rounded-md focus:ring-2 focus:ring-blue-500' 
+                            name="category" 
                             value={formData.category}
-                            onChange={handleChange}
-                            className='w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500'
+                            onChange={handleChange} 
                             required
                         >
-                            <option value="">Select Category</option>
-                            {categoryArr.map((category, index) => (
-                                <option key={index} value={category}>{category}</option>
+                            <option value="">Choose a category</option>
+                            {categoryArr.map((ele, index) => (
+                                <option key={index} value={ele}>{ele}</option>
                             ))}
                         </select>
                     </div>
 
                     <div>
-                        <label className='block text-gray-700 text-sm font-bold mb-2'>Tags (comma-separated)</label>
-                        <input
-                            type="text"
-                            name="tags"
-                            value={formData.tags.join(", ")}
-                            onChange={handleChange}
-                            className='w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500'
-                            placeholder="e.g. electronics, gadget, smartphone"
+                        <label className='block font-medium text-gray-700'>Tags <span className='text-gray-500 text-sm'>(add multiple tags separated by comma)</span></label>
+                        <input 
+                            className='border p-2 w-full rounded-md focus:ring-2 focus:ring-blue-500' 
+                            type="text" 
+                            placeholder='e.g., electronics, gadgets, new' 
+                            name="tags" 
+                            onChange={handleChange} 
                         />
                     </div>
 
-                    <div>
-                        <label className='block text-gray-700 text-sm font-bold mb-2'>Price</label>
-                        <input
-                            type="number"
-                            name="price"
-                            value={formData.price}
-                            onChange={handleChange}
-                            className='w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500'
-                            required
-                            min="0"
-                        />
-                    </div>
-
-                    <div>
-                        <label className='block text-gray-700 text-sm font-bold mb-2'>Stock</label>
-                        <input
-                            type="number"
-                            name="stock"
-                            value={formData.stock}
-                            onChange={handleChange}
-                            className='w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500'
-                            required
-                            min="0"
-                        />
-                    </div>
-
-                    <div>
-                        <label className='block text-gray-700 text-sm font-bold mb-2'>Images</label>
-                        <div className='flex items-center justify-center w-full'>
-                            <label className='w-full flex flex-col items-center px-4 py-6 bg-white rounded-lg shadow-lg tracking-wide uppercase border border-blue cursor-pointer hover:bg-blue-600 hover:text-white transition-all duration-300'>
-                                <IoIosAddCircleOutline className='w-8 h-8'/>
-                                <span className='mt-2 text-base leading-normal'>Select Images</span>
-                                <input
-                                    type='file'
-                                    name="images"
-                                    className='hidden'
-                                    multiple
-                                    accept="image/*"
-                                    onChange={handleChange}
-                                    required={formData.images.length === 0}
-                                />
-                            </label>
+                    <div className='flex space-x-4'>
+                        <div className='w-1/2'>
+                            <label className='block font-medium text-gray-700'>Price</label>
+                            <input 
+                                className='border p-2 w-full rounded-md focus:ring-2 focus:ring-blue-500' 
+                                type="number" 
+                                name="price" 
+                                value={formData.price}
+                                onChange={handleChange} 
+                                required 
+                            />
                         </div>
-                        {formData.previewImg.length > 0 && (
-                            <div className='mt-4 grid grid-cols-3 gap-4'>
-                                {formData.previewImg.map((url, index) => (
-                                    <img
-                                        key={index}
-                                        src={url}
-                                        alt={`Preview ${index + 1}`}
-                                        className='w-full h-24 object-cover rounded'
-                                    />
-                                ))}
-                            </div>
-                        )}
+                        <div className='w-1/2'>
+                            <label className='block font-medium text-gray-700'>Stock</label>
+                            <input 
+                                className='border p-2 w-full rounded-md focus:ring-2 focus:ring-blue-500' 
+                                type="number" 
+                                name="stock" 
+                                value={formData.stock}
+                                onChange={handleChange} 
+                                required 
+                            />
+                        </div>
                     </div>
 
-                    <button
-                        type="submit"
+                    <div>
+                        <label className='block font-medium text-gray-700'>Product Images</label>
+                        <input 
+                            className='hidden' 
+                            type="file" 
+                            name="images" 
+                            id='upload' 
+                            multiple 
+                            accept="image/*"
+                            onChange={handleChange} 
+                            required={formData.images.length === 0}
+                        />
+                        <label htmlFor="upload" className='cursor-pointer flex items-center space-x-2 text-blue-500 hover:text-blue-700'>
+                            <IoIosAddCircleOutline size={24} />
+                            <span>Add Images</span>
+                        </label>
+                    </div>
+
+                    {formData.previewImg.length > 0 && (
+                        <div className='flex flex-wrap gap-2 mt-2'>
+                            {formData.previewImg.map((img, index) => (
+                                <img 
+                                    key={index} 
+                                    src={img} 
+                                    alt={`Preview ${index + 1}`} 
+                                    className='w-20 h-20 object-cover rounded-md shadow-md' 
+                                />
+                            ))}
+                        </div>
+                    )}
+
+                    <button 
+                        type="submit" 
                         disabled={loading}
-                        className={`w-full bg-blue-600 text-white p-3 rounded-lg font-semibold ${
-                            loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'
-                        } transition-colors duration-300`}
+                        className={`w-full py-2 px-4 rounded-md font-semibold transition ${
+                            loading 
+                                ? 'bg-gray-400 cursor-not-allowed' 
+                                : 'bg-blue-600 text-white hover:bg-blue-700'
+                        }`}
                     >
                         {loading ? 'Creating Product...' : 'Create Product'}
                     </button>

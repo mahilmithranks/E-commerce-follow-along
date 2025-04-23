@@ -202,15 +202,24 @@ const OrderConfirmation = () => {
           </div>
         </div>
 
-        {/* Place Order Button */}
+        {/* Payment Buttons */}
         <div className="flex justify-end">
-          <button
-            onClick={handlePlaceOrder}
-            disabled={placingOrder}
-            className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {placingOrder ? "Processing..." : "Place Order"}
-          </button>
+          {orderDetails.paymentMethod === "COD" ? (
+            <button
+              onClick={handlePlaceOrder}
+              disabled={placingOrder}
+              className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {placingOrder ? "Processing..." : "Place Order"}
+            </button>
+          ) : (
+            <PayPalPayment
+              amount={orderDetails.total}
+              onSuccess={handlePayPalSuccess}
+              onError={handlePayPalError}
+              onCancel={handlePayPalCancel}
+            />
+          )}
         </div>
       </div>
     </div>

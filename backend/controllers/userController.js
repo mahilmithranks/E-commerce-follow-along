@@ -1,5 +1,7 @@
-import { UserModel } from "../model/userModel.js";
-import { Errorhadler } from "../utils/errorhadler.js";
+import pkg from "../model/userModel.js";
+const { UserModel } = pkg;
+import errorUtils from "../utils/errorHandler.js";
+const { ErrorHandler } = errorUtils;
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { sendMail } from "../utils/mail.js";

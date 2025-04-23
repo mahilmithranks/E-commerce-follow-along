@@ -1,7 +1,8 @@
 import OrderModel from "../model/orderModel.js";
 import { UserModel } from "../model/userModel.js";
 import { ProductModel } from "../model/productModel.js";
-import { Errorhadler } from "../utils/errorhadler.js";
+import errorUtils from "../utils/errorHandler.js";
+const { ErrorHandler } = errorUtils;
 
 // Create a new order
 export const createOrder = async (req, res, next) => {

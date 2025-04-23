@@ -1710,3 +1710,67 @@ router.get('/profile', verifyToken, (req, res) => {
 });
 
 export default router;
+
+##  Milestone 35: Deploy Frontend and Backend
+
+This milestone focuses on deploying both the backend and frontend of the e-commerce platform. The goal is to deploy the backend on a cloud hosting platform, update the frontend to connect with the live backend, and deploy the frontend as well. The objective is to ensure that both parts of the application are working seamlessly in a production environment.
+
+---
+
+###  Objective
+
+- **Deploy Backend**: Deploy the backend API to a cloud service.
+- **Deploy Frontend**: Deploy the frontend of the e-commerce platform to a hosting service.
+- **Configure Backend in Frontend**: Update the frontend code to point to the live backend deployment URL.
+
+---
+
+###  Steps for Deployment
+
+#### 1. **Deploy Backend**
+
+- **Choose a Backend Deployment Service**: Some popular options are:
+  - **Heroku**: A platform-as-a-service (PaaS) for hosting Node.js apps.
+  - **Vercel** or **Netlify**: Great for deploying frontend, but can also host serverless functions.
+  - **DigitalOcean** or **AWS EC2**: For more control over hosting the backend on a cloud virtual machine.
+
+- **Steps to Deploy Backend on Heroku (Example)**:
+  
+  1. Install the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli).
+  2. Login to Heroku CLI:
+     ```bash
+     heroku login
+     ```
+  3. Initialize a Git repository (if not already initialized):
+     ```bash
+     git init
+     ```
+  4. Create a new Heroku application:
+     ```bash
+     heroku create your-app-name
+     ```
+  5. Push the backend code to Heroku:
+     ```bash
+     git push heroku master
+     ```
+  6. Set environment variables (e.g., for MongoDB URI):
+     ```bash
+     heroku config:set MONGO_URI=your-mongo-db-uri
+     heroku config:set JWT_SECRET=your-jwt-secret
+     ```
+  7. Once deployment is successful, you will receive a URL (e.g., `https://your-app-name.herokuapp.com`).
+
+---
+
+#### 2. **Update Frontend to Use Live Backend**
+
+- **Replace the Localhost URL**: In your frontend, replace all instances of `localhost` in API requests with the backend deployment URL you received in step 1.
+  
+  For example, if your backend URL is `https://your-app-name.herokuapp.com`, update the frontend API calls like:
+
+  ```js
+  // Before
+  const response = await fetch('http://localhost:5000/api/products');
+  
+  // After
+  const response = await fetch('https://your-app-name.herokuapp.com/api/products');

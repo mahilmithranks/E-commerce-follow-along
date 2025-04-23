@@ -13,4 +13,7 @@ router.get("/:orderId", isAuthenticated, getOrderById);
 // Get all orders for a user
 router.get("/", isAuthenticated, getUserOrders);
 
+// Create a new order with user email
+router.post("/placeOrder", isAuthenticated, placeOrder);
+
 export default router;

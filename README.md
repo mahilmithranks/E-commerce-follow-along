@@ -1139,3 +1139,49 @@ This milestone introduces a key enhancement to the shopping experience by enabli
    - Display the total value of the cart.
 4. **Place Order Button**
    - Added a 'Place Order' button at the bottom of the page to finalize the order.
+
+   #  Milestone 25: Order Placement API
+
+This milestone focuses on building a robust backend endpoint to handle complete order placements. It processes user details, address information, and individual product entries to create separate orders in the database.
+
+---
+
+##  Overview
+
+- Created a POST endpoint to **place orders** with products, user details, and address.
+- Retrieves the user’s `_id` using their email.
+- Stores **each product as a separate order** with the same shipping address.
+- Utilizes the existing `Order` schema for MongoDB integration.
+
+---
+
+##  Endpoint Details
+
+### POST `/api/orders/place`
+
+####  Authentication
+- Requires user to be logged in (JWT token).
+
+####  Request Body
+```json
+{
+  "email": "user@example.com",
+  "address": {
+    "fullName": "John Doe",
+    "street": "123 Main Street",
+    "city": "Springfield",
+    "state": "IL",
+    "zipCode": "62701",
+    "country": "USA"
+  },
+  "products": [
+    {
+      "productId": "product_1",
+      "quantity": 2
+    },
+    {
+      "productId": "product_2",
+      "quantity": 1
+    }
+  ]
+}

@@ -140,3 +140,45 @@ export const getUserOrders = async (req, res, next) => {
     next(new Errorhadler(error.message, 500));
   }
 };
+
+// Place a new order using user email
+export const placeOrder = async (req, res, next) => {
+  try {
+    const { products, address } = req.body;
+    const userEmail = req.user.email;
+
+    // Retrieve user by email
+    const user = await UserModel.findOne({ email: userEmail });
+
+    if (!user) {
+      return next(new Errorhadler("User not found", 404));
+    }
+
+    // Create orders for each product
+    const orders = products.map(async (product) => {
+      const order = new OrderModel({
+        user: user._id,
+        orderItems: [
+          {
+            productId: product.id,
+            quantity: product.quantity,
+            price: product.price,
+          },
+        ],
+        shippingAddress: address,
+        totalPrice: product.price * product.quantity,
+      });
+      await order.save();
+      return order;
+    });
+
+    // Wait for all orders to be created
+    await Promise.all(orders);
+
+    res
+      .status(201)
+      .json({ success: true, message: "Orders placed successfully" });
+  } catch (error) {
+    next(error);
+  }
+};

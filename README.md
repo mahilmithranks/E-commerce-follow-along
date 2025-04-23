@@ -1599,3 +1599,114 @@ const userReducer = (state = initialState, action) => {
 };
 
 export default userReducer;
+##  Milestone 33: Implement JWT Token and Cookie Handling
+
+This milestone focuses on implementing JWT (JSON Web Token) authentication for securely managing user sessions. We use the `jsonwebtoken` package to create a JWT token for the user and store it in a cookie in the browser.
+
+---
+
+###  Objective
+
+- Install and configure the `jsonwebtoken` package to generate JWT tokens.
+- Use the `sign` method to create a JWT token with the user's email and ID.
+- Set an expiration time for the token using `maxAge`.
+- Store the JWT token as a cookie in the user's browser for authentication persistence.
+
+---
+
+###  Features Implemented
+
+- **JWT Token Creation**: Created a JWT token for the user containing the email and user ID.
+- **Token Expiration**: Set an expiration time for the token to ensure secure and timed authentication.
+- **Cookie Storage**: Stored the JWT token inside a cookie, making it available to the browser for future requests.
+
+---
+
+###  Steps for Implementation
+
+#### 1. **Install jsonwebtoken Package**
+
+First, install the `jsonwebtoken` package using NPM:
+
+```bash
+npm install jsonwebtoken
+
+// src/controllers/authController.js
+import jwt from 'jsonwebtoken';
+
+const createToken = (user) => {
+  const payload = {
+    email: user.email,
+    userId: user._id,
+  };
+
+  // Create the JWT token with a secret key and expiration time
+  const token = jwt.sign(payload, process.env.JWT_SECRET, {
+    expiresIn: '1h',  // Set the expiration time (1 hour in this case)
+  });
+
+  return token;
+};
+
+const loginUser = (req, res) => {
+  const { email, password } = req.body;
+
+  // Authenticate the user (validate email and password with DB)
+  const user = findUserByEmailAndPassword(email, password); // Your user authentication logic
+
+  if (user) {
+    // Create the JWT token for the user
+    const token = createToken(user);
+
+    // Set the token as a cookie with an expiry of 1 hour
+    res.cookie('authToken', token, {
+      httpOnly: true,  // Prevent client-side JavaScript access to the cookie
+      secure: process.env.NODE_ENV === 'production', // Set to true in production for HTTPS
+      maxAge: 3600000,  // Expiry in milliseconds (1 hour)
+    });
+
+    res.status(200).json({
+      message: 'Login successful',
+      user: { email: user.email },
+    });
+  } else {
+    res.status(400).json({ message: 'Invalid credentials' });
+  }
+};
+
+export { loginUser };
+// src/middleware/authMiddleware.js
+import jwt from 'jsonwebtoken';
+
+const verifyToken = (req, res, next) => {
+  const token = req.cookies.authToken;
+
+  if (!token) {
+    return res.status(401).json({ message: 'Unauthorized. No token provided.' });
+  }
+
+  try {
+    // Verify the token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;  // Attach user data to the request
+    next();  // Proceed to the next middleware or route handler
+  } catch (err) {
+    res.status(401).json({ message: 'Unauthorized. Invalid token.' });
+  }
+};
+
+export { verifyToken };
+// src/routes/protectedRoute.js
+import express from 'express';
+import { verifyToken } from '../middleware/authMiddleware';
+
+const router = express.Router();
+
+router.get('/profile', verifyToken, (req, res) => {
+  res.status(200).json({
+    message: 'Profile data',
+    user: req.user,
+  });
+});
+
+export default router;

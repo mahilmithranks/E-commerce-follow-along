@@ -909,6 +909,23 @@ const handleAddAddress = () => {
 
 ---
 
+## Milestone 27: My Orders Page (Frontend Integration)
+
+This milestone adds a **My Orders** page to the frontend of the e-commerce platform, allowing users to view their entire order history retrieved via the API created in Milestone 26.
+
+### Objective
+
+To provide users with an easy way to review all their past orders using a dedicated page connected to the backend via API.
+
+### Features Implemented
+
+- **My Orders Page**: A new page created using React that displays a list of all user orders.
+- **API Integration**: Fetches orders using the `POST /api/orders/user` endpoint with the user's email and JWT token.
+- **Detailed Order View**: Each order displays product info, quantity, delivery address, status, and timestamp.
+- **Navbar Link**: Added a "My Orders" link to the main navigation bar for improved user accessibility.
+
+---
+
 ## Setup Instructions
 
 1. Clone the repository
@@ -1084,27 +1101,30 @@ All errors are returned in a consistent format:
 }
 ```
 
-#  Milestone 23: Order Placement and Address Selection
+# Milestone 23: Order Placement and Address Selection
 
 This milestone introduces a key enhancement to the shopping experience by enabling users to place orders and select from their saved delivery addresses during checkout.
 
 ---
 
-##  Features Implemented
+## Features Implemented
 
 ### 1. **Order Placement Flow**
+
 - Added a `Place Order` button to the Cart page.
 - Initiates the checkout process directly from the cart.
 
 ### 2. **Select Address Page**
+
 - New interface allowing users to select a delivery address from their saved list.
 - Designed for usability and quick navigation.
 
 ---
 
-##  Backend Integration
+## Backend Integration
 
 ### Endpoint: `GET /api/user/addresses`
+
 - **Description**: Retrieves all saved addresses for the authenticated user.
 - **Authentication**: Required (JWT-based)
 - **Response**:
@@ -1123,7 +1143,7 @@ This milestone introduces a key enhancement to the shopping experience by enabli
       ...
     ]
   }
-
+  ```
 
 ---
 
@@ -1138,15 +1158,16 @@ This milestone introduces a key enhancement to the shopping experience by enabli
 3. **Display Total Cart Value**
    - Display the total value of the cart.
 4. **Place Order Button**
+
    - Added a 'Place Order' button at the bottom of the page to finalize the order.
 
-   #  Milestone 25: Order Placement API
+   # Milestone 25: Order Placement API
 
 This milestone focuses on building a robust backend endpoint to handle complete order placements. It processes user details, address information, and individual product entries to create separate orders in the database.
 
 ---
 
-##  Overview
+## Overview
 
 - Created a POST endpoint to **place orders** with products, user details, and address.
 - Retrieves the user’s `_id` using their email.
@@ -1155,15 +1176,17 @@ This milestone focuses on building a robust backend endpoint to handle complete 
 
 ---
 
-##  Endpoint Details
+## Endpoint Details
 
 ### POST `/api/orders/place`
 
-####  Authentication
+#### Authentication
+
 - Requires user to be logged in (JWT token).
 
-####  Request Body
-```json
+#### Request Body
+
+````json
 {
   "email": "user@example.com",
   "address": {
@@ -1187,28 +1210,86 @@ This milestone focuses on building a robust backend endpoint to handle complete 
 }
 
 
-#  Milestone 26: Retrieve All Orders for a User
+# 🛒 E-Commerce Platform – Order Management Module
 
-This milestone focuses on creating an API endpoint that allows retrieval of all orders placed by a specific user using their email address. It enhances user account functionality by enabling order history access.
-
----
-
-##  Objective
-
-- Build a secure endpoint to fetch **all orders associated with a user**.
-- Use the provided email to identify the user and query the `orders` collection accordingly.
+This module enhances the e-commerce platform by introducing order history functionality and a corresponding frontend interface, enabling users to view and track their past purchases.
 
 ---
 
-##  Endpoint Details
+## ✅ Milestone 26: User Order History API
 
-### GET `/api/orders/user`
+This milestone implements a robust API endpoint for retrieving a user's complete order history, enhancing the account management capabilities.
 
-####  Authentication
-- Requires user to be logged in (JWT token).
+### 🔑 Key Features
 
-####  Request Body (JSON)
+- **Secure Order Retrieval**: Fetch all orders associated with authenticated users
+- **Email-based Identification**: Efficiently query orders using user email
+- **Comprehensive Order Details**: Returns product, address, status, and timestamps
+- **JWT Authentication**: Ensures access is restricted to logged-in users
+
+### 📡 API Specification
+
+#### Endpoint
+`POST /api/orders/user`
+
+#### Headers
+- `Authorization: Bearer <token>`
+
+#### Request Body
 ```json
 {
   "email": "user@example.com"
 }
+{
+  "orders": [
+    {
+      "_id": "order_id_1",
+      "user": "user_id",
+      "product": {
+        "productId": "product_1",
+        "name": "Product Name"
+      },
+      "quantity": 1,
+      "address": {
+        "fullName": "John Doe",
+        "city": "Springfield",
+        "state": "IL"
+      },
+      "status": "Processing",
+      "createdAt": "2025-04-23T12:00:00Z"
+    }
+  ]
+}
+
+## ✅ Milestone 27: My Orders Page (Frontend Integration)
+
+This milestone adds a **My Orders** page to the frontend of the e-commerce platform, allowing users to view their entire order history retrieved via the API created in Milestone 26.
+
+---
+
+### 🎯 Objective
+
+To provide users with an easy way to review all their past orders using a dedicated page connected to the backend via API.
+
+---
+
+### 🛠️ Features Implemented
+
+- **My Orders Page**: A new page created using React that displays a list of all user orders.
+- **API Integration**: Fetches orders using the `POST /api/orders/user` endpoint with the user's email and JWT token.
+- **Detailed Order View**: Each order displays product info, quantity, delivery address, status, and timestamp.
+- **Navbar Link**: Added a "My Orders" link to the main navigation bar for improved user accessibility.
+
+---
+
+### 📡 API Call Sample
+
+```js
+const response = await axios.post('/api/orders/user', {
+  email: user.email
+}, {
+  headers: {
+    Authorization: `Bearer ${token}`
+  }
+});
+````

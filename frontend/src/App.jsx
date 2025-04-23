@@ -11,6 +11,7 @@ import Profile from "./pages/Profile";
 import SelectAddress from "./pages/SelectAddress";
 import OrderConfirmation from "./pages/OrderConfirmation";
 import OrderSuccess from "./pages/OrderSuccess";
+import MyOrders from "./pages/MyOrders";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Route path="/select-address" element={<SelectAddress />} />
         <Route path="/order-confirmation" element={<OrderConfirmation />} />
         <Route path="/order-success/:orderId" element={<OrderSuccess />} />
+        <Route path="/my-orders" element={<MyOrders />} />
       </Routes>
     </BrowserRouter>
   );

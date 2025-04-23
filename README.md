@@ -1293,3 +1293,35 @@ const response = await axios.post('/api/orders/user', {
   }
 });
 ````
+##  Milestone 28: Cancel Order Feature
+
+In this milestone, we enhance the **My Orders** page by adding a **Cancel Order** button to each order. If an order is already canceled, the button will not appear. Additionally, a backend API endpoint is implemented to handle the cancellation of orders.
+
+---
+
+###  Objective
+
+- Add a **Cancel Order** button to each order in the **My Orders** page.
+- Ensure the button is only visible if the order status is not already "Canceled."
+- Create a backend endpoint that marks an order as canceled when requested.
+
+---
+
+###  Features Implemented
+
+- **Cancel Order Button**: A button is added to each order on the **My Orders** page, allowing users to cancel their orders.
+- **Conditional Button Display**: The cancel button is hidden if the order status is already "Canceled."
+- **Backend Endpoint**: Created a `POST /api/orders/cancel` endpoint that accepts an order ID, retrieves the order, updates its status to "Canceled," and saves the changes to the database.
+
+---
+
+###  API Specification
+
+#### Endpoint
+`POST /api/orders/cancel`
+
+#### Request Format
+```json
+{
+  "orderId": "order_id_123"
+}

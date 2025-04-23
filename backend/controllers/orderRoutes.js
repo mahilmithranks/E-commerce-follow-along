@@ -1,6 +1,11 @@
 import express from "express";
 import { isAuthenticated } from "../middleware/auth.js";
-import { createOrder, getOrderById, getUserOrders } from "./orderController.js";
+import {
+  createOrder,
+  getOrderById,
+  getUserOrders,
+  cancelOrder,
+} from "./orderController.js";
 
 const router = express.Router();
 
@@ -18,5 +23,8 @@ router.post("/placeOrder", isAuthenticated, placeOrder);
 
 // Route to get all orders for a user by email
 router.get("/orders/:email", getUserOrdersByEmail);
+
+// Cancel an order
+router.put("/:orderId/cancel", isAuthenticated, cancelOrder);
 
 export default router;

@@ -187,3 +187,40 @@ export const placeOrder = async (req, res, next) => {
     next(error);
   }
 };
+
+// Cancel an order
+export const cancelOrder = async (req, res, next) => {
+  try {
+    const { orderId } = req.params;
+    const userId = req.user.id;
+
+    const order = await OrderModel.findById(orderId);
+
+    if (!order) {
+      return next(new Errorhadler("Order not found", 404));
+    }
+
+    // Check if the order belongs to the user (unless admin)
+    if (order.user.toString() !== userId && req.user.role !== "admin") {
+      return next(
+        new Errorhadler("You are not authorized to cancel this order", 403)
+      );
+    }
+
+    // Check if order is already cancelled
+    if (order.status === "Cancelled") {
+      return next(new Errorhadler("Order is already cancelled", 400));
+    }
+
+    // Update order status to cancelled
+    order.status = "Cancelled";
+    await order.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Order cancelled successfully",
+    });
+  } catch (error) {
+    next(new Errorhadler(error.message, 500));
+  }
+};

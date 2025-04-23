@@ -1443,3 +1443,78 @@ function Checkout() {
 }
 
 export default Checkout;
+
+## ✅ Milestone 31: Implementing Redux for Global State Management
+
+This milestone integrates **Redux** into the React application to manage the global state for the user's email address. Redux helps to maintain the email state globally, making it accessible across all components within the app.
+
+---
+
+### 🎯 Objective
+
+- Integrate Redux into the application.
+- Store the user's email in the global state and make it accessible across the app.
+- Set up the Redux store, actions, and reducers to handle email management.
+
+---
+
+### 🛠️ Features Implemented
+
+- **react-redux Integration**: Installed the `react-redux` package to connect Redux with the React application.
+- **Global State Management**: Stored the user's email address in the global state.
+- **User Actions**: Created an action to set and update the user's email in the global state.
+- **Store Setup**: Configured the Redux store with the userReducer to handle the email state.
+
+---
+
+### 🛠️ Steps for Implementation
+
+#### 1. **Install `react-redux` and `redux` Packages**
+   Install the required packages to integrate Redux into your React app:
+
+   ```bash
+   npm install react-redux redux
+
+// store/store.js
+import { createStore } from 'redux';
+import userReducer from './userReducer';
+
+const store = createStore(userReducer);
+
+export default store;
+
+// store/userActions.js
+export const setEmail = (email) => {
+  return {
+    type: 'SET_EMAIL',
+    payload: email,
+  };
+};
+// store/userReducer.js
+const initialState = {
+  email: '',
+};
+
+const userReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case 'SET_EMAIL':
+      return { ...state, email: action.payload };
+    default:
+      return state;
+  }
+};
+
+export default userReducer;
+// src/index.js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import store from './store/store';  // Path to your store.js
+import App from './App';
+
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById('root')
+);

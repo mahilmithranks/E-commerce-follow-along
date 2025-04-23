@@ -38,7 +38,9 @@ A powerful and scalable backend system for managing an e-commerce platform. Buil
   - Designed to handle high traffic and large datasets efficiently.
 
 ### Address Management
+
 The application allows users to manage multiple addresses. Each address includes the following fields:
+
 - Street address
 - City
 - State
@@ -48,6 +50,7 @@ The application allows users to manage multiple addresses. Each address includes
 #### API Endpoints for Address Management
 
 1. **Add New Address**
+
    - Endpoint: `POST /api/user/address`
    - Authentication: Required (JWT token)
    - Request Body:
@@ -245,6 +248,7 @@ In this milestone, we created a product input form that allows users to enter pr
 ### Installation & Usage
 
 Clone the repository:
+
 ```sh
 git clone YOUR_REPOSITORY_LINK
 cd ecommerce-follow-along
@@ -278,11 +282,13 @@ In this milestone, we implemented the product listing functionality by creating 
 ### Key Features
 
 #### Backend Implementation
+
 - Created a GET endpoint `/getAllProducts` to fetch all products from MongoDB
 - Implemented proper error handling and success responses
 - Structured the API response with product data including images, descriptions, and prices
 
 #### Frontend Implementation
+
 - Developed dynamic product fetching using React's `useState` and `useEffect` hooks
 - Created a responsive grid layout using Tailwind CSS that adapts to different screen sizes
 - Implemented loading states for better user experience
@@ -300,6 +306,7 @@ In this milestone, we implemented the product listing functionality by creating 
   - Large Desktop: 5 columns
 
 #### Learning Outcomes
+
 - Understanding of frontend-backend data flow
 - Implementation of dynamic data rendering in React
 - Working with responsive grid layouts in Tailwind CSS
@@ -316,11 +323,13 @@ In this milestone, we implemented user-specific product filtering functionality,
 ### Key Features
 
 #### Backend Implementation
+
 - Created a new GET endpoint `/getUserProducts/:email` to filter products by user email
 - Implemented proper error handling and validation
 - Returns filtered products with success status
 
 #### Frontend Implementation
+
 - Enhanced the My Products page with dynamic product fetching
 - Reused ProductCard component for consistent product display
 - Added loading states and error handling for better UX
@@ -328,6 +337,7 @@ In this milestone, we implemented user-specific product filtering functionality,
 - Integrated with user authentication using localStorage
 
 #### Learning Goals
+
 - Understanding data filtering with specific constraints
 - Implementing protected routes and user-specific content
 - Maintaining consistent UI/UX across different views
@@ -343,12 +353,14 @@ In this milestone, we implemented a comprehensive product update system that all
 ### Key Features
 
 #### Backend Implementation
+
 - Created PUT endpoint `/updateProduct/:id` for updating product details
 - Added validation to ensure users can only edit their own products
 - Supports updating all product fields including multiple images
 - Implements proper error handling and success responses
 
 #### Frontend Implementation
+
 - Created reusable `ProductForm` component for both adding and editing products
 - Added edit button to product cards in My Products page
 - Implemented `EditProduct` page with auto-filled form data
@@ -356,6 +368,7 @@ In this milestone, we implemented a comprehensive product update system that all
 - Integrated seamless navigation between viewing and editing products
 
 #### Learning Goals
+
 - Understanding CRUD operations in MongoDB
 - Implementing secure product ownership validation
 - Creating reusable form components
@@ -372,12 +385,14 @@ In this milestone, we implemented a secure product deletion system that allows u
 ### Key Features
 
 #### Backend Implementation
+
 - Created DELETE endpoint `/deleteProduct/:id` for removing products
 - Added ownership validation to ensure secure deletions
 - Implemented email-based authorization
 - Added proper error handling and success responses
 
 #### Frontend Implementation
+
 - Enhanced ProductCard component with delete functionality
 - Added confirmation dialog to prevent accidental deletions
 - Implemented loading states during deletion
@@ -385,6 +400,7 @@ In this milestone, we implemented a secure product deletion system that allows u
 - Included automatic UI refresh after successful deletion
 
 #### Learning Goals
+
 - Understanding DELETE operations in MongoDB
 - Implementing secure data deletion with ownership validation
 - Creating user-friendly confirmation flows
@@ -409,6 +425,7 @@ In this milestone, we implemented a modern, responsive navigation system that pr
 #### **Navigation Links**
 
 The navigation system includes links to all essential pages:
+
 - Home - Main landing page
 - My Products - View and manage products
 - Add Product - Create new product listings
@@ -449,6 +466,7 @@ In this milestone, we implemented a comprehensive product details page that prov
 ### Key Features
 
 #### Product Details Page
+
 - Interactive image gallery with navigation controls
 - Detailed product information display
   - Product name and price
@@ -460,17 +478,20 @@ In this milestone, we implemented a comprehensive product details page that prov
 - Loading states and error handling
 
 #### Enhanced Product Card
+
 - Improved navigation to product details
 - Made entire card clickable for better UX
 - Optimized button layout and interactions
 
 #### UI/UX Improvements
+
 - Image gallery with previous/next navigation
 - Image indicator dots for gallery navigation
 - Clean and modern design using Tailwind CSS
 - Consistent styling with the rest of the application
 
 ### Learning Goals
+
 - Creating interactive image galleries
 - Implementing dynamic routing with parameters
 - Designing responsive layouts for detailed content
@@ -499,16 +520,20 @@ In this milestone, we implemented a comprehensive product details page that prov
 ## Milestone 19: Cart Functionality Implementation
 
 ### Overview
+
 Implemented a complete shopping cart system with the ability to view cart items, update quantities, and remove products. The implementation includes both frontend and backend components with proper error handling and user feedback.
 
 ### Key Features
+
 1. Cart Display
+
    - List of all products in the cart
    - Product images, names, and prices
    - Current quantity and stock information
    - Total price calculation
 
 2. Quantity Management
+
    - Increase/decrease quantity with + and - buttons
    - Stock limit validation
    - Real-time updates
@@ -523,12 +548,15 @@ Implemented a complete shopping cart system with the ability to view cart items,
 ### Technical Implementation
 
 #### Backend Endpoints
+
 1. GET `/api/cart`
+
    - Retrieves all cart items for the logged-in user
    - Returns populated product details
    - Requires authentication
 
 2. PUT `/api/cart/quantity`
+
    - Updates the quantity of a product in the cart
    - Validates stock availability
    - Requires productId and quantity in request body
@@ -540,7 +568,9 @@ Implemented a complete shopping cart system with the ability to view cart items,
    - Requires authentication
 
 #### Frontend Components
+
 1. Cart Page (`Cart.jsx`)
+
    - Main cart view component
    - Handles cart state management
    - Calculates total price
@@ -553,6 +583,7 @@ Implemented a complete shopping cart system with the ability to view cart items,
    - Stock validation
 
 ### User Experience
+
 - Clean and intuitive interface
 - Real-time feedback for all actions
 - Loading states during operations
@@ -561,6 +592,7 @@ Implemented a complete shopping cart system with the ability to view cart items,
 - Clear empty cart state with call-to-action
 
 ### Error Handling
+
 - Stock limit validation
 - Network error handling
 - Authentication error handling
@@ -568,17 +600,21 @@ Implemented a complete shopping cart system with the ability to view cart items,
 - User feedback through toast notifications
 
 ### Usage Instructions
+
 1. View Cart
+
    - Navigate to the cart page
    - View all added products
    - Check total price
 
 2. Update Quantity
+
    - Use + and - buttons to adjust quantity
    - System validates against available stock
    - Changes are saved automatically
 
 3. Remove Products
+
    - Click the "Remove" button next to any product
    - Product is removed immediately
    - Cart updates automatically
@@ -589,6 +625,7 @@ Implemented a complete shopping cart system with the ability to view cart items,
    - Ready for future implementation
 
 ### Learning Goals
+
 - State management in React
 - API integration
 - Error handling
@@ -598,6 +635,7 @@ Implemented a complete shopping cart system with the ability to view cart items,
 - Responsive design
 
 ### Next Steps
+
 1. Implement checkout functionality
 2. Add order history
 3. Implement payment integration
@@ -609,11 +647,13 @@ Implemented a complete shopping cart system with the ability to view cart items,
 ## Milestone 20: Profile Page Implementation
 
 ### Overview
+
 Implemented a comprehensive profile page that displays user information and manages delivery addresses. The implementation includes both frontend components and backend endpoints for a complete user profile management system.
 
 ### Key Features
 
 #### Backend Implementation
+
 - Created GET endpoint `/api/user/profile` to fetch user data
 - Returns user details including:
   - Personal information (name, email)
@@ -622,12 +662,15 @@ Implemented a comprehensive profile page that displays user information and mana
 - Proper error handling and authentication
 
 #### Frontend Implementation
+
 1. Profile Page Layout
+
    - Clean, modern design with two main sections
    - Responsive layout for all screen sizes
    - Loading states for better UX
 
 2. Personal Information Section
+
    - Profile photo display
    - User name and email
    - Clean and organized layout
@@ -641,6 +684,7 @@ Implemented a comprehensive profile page that displays user information and mana
 ### Technical Implementation
 
 #### Backend Endpoint
+
 ```javascript
 // GET /api/user/profile
 {
@@ -664,7 +708,9 @@ Implemented a comprehensive profile page that displays user information and mana
 ```
 
 #### Frontend Components
+
 1. Profile Page (`Profile.jsx`)
+
    - State management for user data
    - Loading state handling
    - Error handling with toast notifications
@@ -676,6 +722,7 @@ Implemented a comprehensive profile page that displays user information and mana
    - Responsive mobile menu support
 
 ### User Experience
+
 - Clean and intuitive interface
 - Clear section separation
 - Loading states during data fetch
@@ -684,6 +731,7 @@ Implemented a comprehensive profile page that displays user information and mana
 - Clear empty state messaging
 
 ### Learning Goals
+
 - Creating organized layouts
 - Managing user data
 - Implementing loading states
@@ -693,12 +741,15 @@ Implemented a comprehensive profile page that displays user information and mana
 - API integration
 
 ### Usage Instructions
+
 1. View Profile
+
    - Navigate to the profile page
    - View personal information
    - Check saved addresses
 
 2. Add Address
+
    - Click "Add Address" button
    - Fill in address details
    - Save the new address
@@ -709,6 +760,7 @@ Implemented a comprehensive profile page that displays user information and mana
    - Add new addresses as needed
 
 ### Next Steps
+
 1. Add address editing functionality
 2. Implement address deletion
 3. Add profile photo upload
@@ -720,6 +772,7 @@ Implemented a comprehensive profile page that displays user information and mana
 ## Milestone 21: Address Form Frontend Implementation
 
 ### Overview
+
 In this milestone, we created a user-friendly address form component that allows users to add new delivery addresses to their profile. The form includes validation, loading states, and proper error handling to ensure a smooth user experience.
 
 ### Features
@@ -731,6 +784,7 @@ In this milestone, we created a user-friendly address form component that allows
 ### Installation & Usage
 
 Clone the repository:
+
 ```sh
 git clone YOUR_REPOSITORY_LINK
 cd ecommerce-follow-along
@@ -739,6 +793,7 @@ cd ecommerce-follow-along
 ### Key Features
 
 #### Frontend Implementation
+
 - Created a new `AddressForm` component with form validation
 - Implemented state management using React hooks
 - Added loading states for better UX
@@ -747,7 +802,9 @@ cd ecommerce-follow-along
 - Implemented error handling with toast notifications
 
 #### Form Fields
+
 The address form includes the following fields:
+
 - Street Address
 - City
 - State
@@ -755,6 +812,7 @@ The address form includes the following fields:
 - Country
 
 #### User Experience
+
 - Clean and intuitive form layout
 - Real-time form validation
 - Loading states during submission
@@ -765,24 +823,26 @@ The address form includes the following fields:
 ### Technical Implementation
 
 #### State Management
+
 ```javascript
 const [formData, setFormData] = useState({
-  street: '',
-  city: '',
-  state: '',
-  zipCode: '',
-  country: ''
+  street: "",
+  city: "",
+  state: "",
+  zipCode: "",
+  country: "",
 });
 const [loading, setLoading] = useState(false);
 ```
 
 #### Form Handling
+
 ```javascript
 const handleChange = (e) => {
   const { name, value } = e.target;
-  setFormData(prev => ({
+  setFormData((prev) => ({
     ...prev,
-    [name]: value
+    [name]: value,
   }));
 };
 
@@ -790,13 +850,13 @@ const handleSubmit = async (e) => {
   e.preventDefault();
   setLoading(true);
   try {
-    const response = await api.post('/api/user/address', formData);
+    const response = await api.post("/api/user/address", formData);
     if (response.data.success) {
-      toast.success('Address added successfully');
-      navigate('/profile');
+      toast.success("Address added successfully");
+      navigate("/profile");
     }
   } catch (error) {
-    toast.error(error.response?.data?.message || 'Error adding address');
+    toast.error(error.response?.data?.message || "Error adding address");
   } finally {
     setLoading(false);
   }
@@ -804,6 +864,7 @@ const handleSubmit = async (e) => {
 ```
 
 ### UI Components
+
 - Form inputs with labels
 - Loading state for submit button
 - Cancel button to return to profile
@@ -811,12 +872,14 @@ const handleSubmit = async (e) => {
 - Responsive layout using Tailwind CSS
 
 ### Integration Points
+
 - Connected to backend API endpoint
 - Integrated with React Router for navigation
 - Uses toast notifications for feedback
 - Maintains consistent styling with the rest of the application
 
 ### Learning Goals
+
 - Creating reusable form components
 - Managing form state in React
 - Implementing form validation
@@ -826,16 +889,19 @@ const handleSubmit = async (e) => {
 - Implementing responsive design
 
 ### Usage
+
 The address form can be accessed from the profile page:
+
 ```javascript
 // In Profile component
 const navigate = useNavigate();
 const handleAddAddress = () => {
-  navigate('/add-address');
+  navigate("/add-address");
 };
 ```
 
 ### Error Handling
+
 - Form validation for required fields
 - API error handling with user-friendly messages
 - Loading states to prevent multiple submissions
@@ -873,14 +939,14 @@ To add a new address from the frontend, you can use the following code:
 ```javascript
 const addAddress = async (addressData) => {
   try {
-    const response = await api.post('/api/user/address', addressData);
+    const response = await api.post("/api/user/address", addressData);
     if (response.data.success) {
       // Handle success (e.g., show notification, update state)
-      console.log('Address added successfully');
+      console.log("Address added successfully");
     }
   } catch (error) {
     // Handle error
-    console.error('Error adding address:', error);
+    console.error("Error adding address:", error);
   }
 };
 ```
@@ -888,12 +954,14 @@ const addAddress = async (addressData) => {
 ## Error Handling
 
 The API includes proper error handling for various scenarios:
+
 - Missing required fields
 - Invalid authentication
 - Server errors
 - Database errors
 
 All errors are returned in the following format:
+
 ```json
 {
   "success": false,
@@ -909,7 +977,6 @@ All errors are returned in the following format:
 - Passwords are hashed using bcrypt
 - CORS is enabled for secure cross-origin requests
 
-
 ## Milestone 22: Create Address Endpoint.
 
 ### Overview
@@ -919,6 +986,7 @@ In this milestone, we implemented a comprehensive address management system that
 ### Key Features
 
 #### Backend Implementation
+
 - Created new endpoint `/api/user/address` for adding new addresses
 - Implemented address validation to ensure all required fields are provided
 - Added address storage in the user's document using MongoDB's array structure
@@ -926,7 +994,9 @@ In this milestone, we implemented a comprehensive address management system that
 - Added proper error handling and success responses
 
 #### Address Schema
+
 Each address includes the following fields:
+
 - Street address
 - City
 - State
@@ -936,6 +1006,7 @@ Each address includes the following fields:
 #### API Endpoints
 
 1. **Add New Address**
+
    - Endpoint: `POST /api/user/address`
    - Authentication: Required (JWT token)
    - Request Body:
@@ -955,12 +1026,14 @@ Each address includes the following fields:
    - Returns user profile with all saved addresses
 
 #### Security Features
+
 - All address operations require authentication
 - Input validation for all address fields
 - Secure storage in MongoDB
 - Protected routes with JWT verification
 
 ### Learning Goals
+
 - Understanding MongoDB array operations
 - Implementing secure data storage
 - Creating reusable API endpoints
@@ -968,6 +1041,7 @@ Each address includes the following fields:
 - Proper error handling and validation
 
 ### Technical Implementation
+
 - Used MongoDB's `$push` operator for adding new addresses
 - Implemented proper validation middleware
 - Integrated with existing user authentication system
@@ -975,30 +1049,34 @@ Each address includes the following fields:
 - Maintained consistent API response format
 
 ### Usage Example
+
 ```javascript
 // Adding a new address
 const addAddress = async (addressData) => {
   try {
-    const response = await api.post('/api/user/address', addressData);
+    const response = await api.post("/api/user/address", addressData);
     if (response.data.success) {
       // Handle success
-      console.log('Address added successfully');
+      console.log("Address added successfully");
     }
   } catch (error) {
     // Handle error
-    console.error('Error adding address:', error);
+    console.error("Error adding address:", error);
   }
 };
 ```
 
 ### Error Handling
+
 The API includes proper error handling for various scenarios:
+
 - Missing required fields
 - Invalid authentication
 - Server errors
 - Database errors
 
 All errors are returned in a consistent format:
+
 ```json
 {
   "success": false,
@@ -1006,7 +1084,6 @@ All errors are returned in a consistent format:
 }
 ```
 
----
 #  Milestone 23: Order Placement and Address Selection
 
 This milestone introduces a key enhancement to the shopping experience by enabling users to place orders and select from their saved delivery addresses during checkout.
@@ -1046,3 +1123,19 @@ This milestone introduces a key enhancement to the shopping experience by enabli
       ...
     ]
   }
+
+
+---
+
+## Milestone 24: Order Summary and Placement
+
+### Features Implemented
+
+1. **Display Ordered Products**
+   - Show all products that the user is ordering.
+2. **Display Delivery Address**
+   - Show the address selected by the user for delivery.
+3. **Display Total Cart Value**
+   - Display the total value of the cart.
+4. **Place Order Button**
+   - Added a 'Place Order' button at the bottom of the page to finalize the order.

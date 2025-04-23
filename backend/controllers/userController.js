@@ -199,3 +199,32 @@ export const getUserAddresses = async (req, res, next) => {
     next(new Errorhadler(error.message, 500));
   }
 };
+
+// Get a specific address by ID
+export const getAddressById = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const { addressId } = req.params;
+
+    const user = await UserModel.findById(userId);
+
+    if (!user) {
+      return next(new Errorhadler("User not found", 404));
+    }
+
+    const address = user.addresses.find(
+      (addr) => addr._id.toString() === addressId
+    );
+
+    if (!address) {
+      return next(new Errorhadler("Address not found", 404));
+    }
+
+    res.status(200).json({
+      success: true,
+      address,
+    });
+  } catch (error) {
+    next(new Errorhadler(error.message, 500));
+  }
+};

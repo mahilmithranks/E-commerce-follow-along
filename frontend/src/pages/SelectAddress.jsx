@@ -38,7 +38,7 @@ const SelectAddress = () => {
     }
     // Proceed with order placement logic
     toast.success("Address selected successfully");
-    navigate("/place-order");
+    navigate(`/order-confirmation?addressId=${selectedAddress}`);
   };
 
   return (

@@ -1,40 +1,35 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import {BrowserRouter,Routes,Route} from "react-router-dom"
-import './App.css'
-import Login from './pages/login'
-import Home from './pages/Home'
-import Createproudct from './components/Createproudct'
-import SellerProcutPage from "./pages/SellerProductPage"
-import NavBar from "./components/nav"
-import IndividualProduct from './pages/IndividualProduct'
-import Cart from './pages/Cart'
-import Profile from './pages/Profile'
-import AddressForm from './components/AddressForm'
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
+import Home from "./pages/Home";
+import Login from "./pages/login";
+import Signup from "./components/signup";
+import Navbar from "./components/Navbar";
+import IndividualProduct from "./pages/IndividualProduct";
+import Cart from "./pages/Cart";
+import Profile from "./pages/Profile";
+import SelectAddress from "./pages/SelectAddress";
+import OrderConfirmation from "./pages/OrderConfirmation";
+import OrderSuccess from "./pages/OrderSuccess";
 
 function App() {
-  
-
   return (
-    <>
-      <BrowserRouter>
-        <NavBar/>
-       <Routes>
-            <Route  path="/"  element={<Home/>}/>
-            <Route path="/login" element={<Login/>}/>
-            <Route path="/create" element={<Createproudct/>}></Route>
-            <Route path="/modify" element={<SellerProcutPage/>}></Route>
-            <Route path="/pro" element={<IndividualProduct/>}></Route>
-            <Route path="/cart" element={<Cart/>}></Route>
-            <Route path="/profile" element={<Profile/>}></Route>
-            <Route path="/add-address" element={<AddressForm/>}></Route>
-       </Routes>
-     </BrowserRouter>
-
-
-    </>
-  )
+    <BrowserRouter>
+      <Toaster position="top-center" />
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/product/:id" element={<IndividualProduct />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/select-address" element={<SelectAddress />} />
+        <Route path="/order-confirmation" element={<OrderConfirmation />} />
+        <Route path="/order-success/:orderId" element={<OrderSuccess />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;

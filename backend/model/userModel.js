@@ -5,11 +5,11 @@ const addressSchema=mongoose.Schema({
         type:String,
         required:true
     },
-    state:{
+    city:{
         type:String,
         required:true
     },
-    district:{
+    address:{
         type:String,
         required:true
 
@@ -20,8 +20,27 @@ const addressSchema=mongoose.Schema({
     },
     area:{
         type:String
+    },
+    addressType:{
+        type:String
     }
 
+})
+
+const cartSchema=mongoose.Schema({
+    
+        productId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Product",
+          required: true,
+        },
+        quantity: {
+          type: Number,
+          required: true,
+          min: [1, "Quantity cannot be less than 1"],
+          default: 1,
+        },
+      
 })
 
 
@@ -32,9 +51,7 @@ const userSchema =mongoose.Schema({
     },
     email:{
         type:String,
-        required:true,
-        unique: true,
-        match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email address']
+        required:true
     },
     password:{
         type:String,
@@ -45,17 +62,16 @@ const userSchema =mongoose.Schema({
         default:"user",
         enum:["user","seller","admin"]
     },
-    address:{
-        type:addressSchema,
-        required: false
-    },
+    address:[{type:addressSchema}],
     isActivated:{
         type:Boolean,
-        default:true // Changed to true for testing
+        default:false
+    },
+    cart: [cartSchema],
+    profilePhoto:{
+        type:String
     }
 
-},{
-    timestamps: true
 })
 
 

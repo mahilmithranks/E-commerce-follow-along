@@ -1,138 +1,180 @@
-let express = require("express");
-const ProductModel = require("../model/productModel");
+let express=require("express")
+const ProductModel  = require("../model/productModel");
 const catchAsyncError = require("../middleware/catchAsyncError");
-const Errorhadler = require("../utils/errorHandler");
-const productRouter = express.Router();
-const UserModel = require("../model/userModel");
-const mongoose = require("mongoose");
-const { productUpload } = require("../middleware/multer");
-const { isAuthenticatedUser } = require("../middleware/auth");
+const Errorhadler=require("../utils/errorhadler")
+const productRouter= express.Router()
+const UserModel = require("../model/userModel")
+const {productUpload}=require("../middleware/multer")
+let path=require('path')
+const mongoose=require("mongoose")
+const auth=require("../middleware/auth")
 
-productRouter.get("/getAllProducts", catchAsyncError(async (req, res, next) => {
-  const products = await ProductModel.find();
-  res.status(200).json({
-    success: true,
-    products,
-  });
-}));
-
-productRouter.get("/getUserProducts/:email", isAuthenticatedUser, catchAsyncError(async (req, res, next) => {
-  const { email } = req.params;
-  if (!email) {
-    return next(new Errorhadler("Email is required", 400));
-  }
+productRouter.post("/create-product",productUpload.array("images",10), catchAsyncError(async(req, res, next)=>{
+    const { email,name, description,category,tags,price,stock} = req.body;
   
-  const products = await ProductModel.find({ email });
-  res.status(200).json({
-    success: true,
-    products,
-  });
-}));
+    const images =req.files.map((file)=>path.basename(file.path));
+   
 
-productRouter.post(
-  "/createProduct",
-  isAuthenticatedUser,
-  productUpload.array("images", 10),
-  catchAsyncError(async (req, res, next) => {
-    const { name, description, category, tags, price, stock } = req.body;
-    const images = req.files.map((file) => file.path);
-
-    if (!name || !description || !category || !tags || !price || !stock || !images.length) {
-      return next(new Errorhadler("All fields are required", 400));
+    if (!email ||!name ||!description ||!category ||!tags ||!price ||!images ||!stock) {
+       return  next(new Errorhadler("All fields are required",400))
     }
-
-    const product = new ProductModel({
-      email: req.user.email,
-      name,
-      description,
-      category,
-      tags: typeof tags === 'string' ? JSON.parse(tags) : tags,
-      price,
-      images,
-      stock,
-    });
-
-    await product.save();
+    let user=await UserModel.findOne({email})
+    console.log(user)
     
-    res.status(201).json({ 
-      success: true,
-      message: "Product created successfully",
-      product
-    });
-  })
-);
+    if(!user){
+        return next(new Errorhadler("user is not exist",404))
+    }
+    let product=new ProductModel({email,name, description,category,tags,price,images,stock})
+     console.log(product)
 
-productRouter.put(
-  "/updateProduct/:id",
-  isAuthenticatedUser,
-  productUpload.array("images", 10),
-  catchAsyncError(async (req, res, next) => {
-    const { id } = req.params;
-    const { name, description, category, tags, price, stock } = req.body;
-    const images = req.files ? req.files.map((file) => file.path) : null;
+    await product.save()
+    res.status(201).json({message:"Product created successfully"})
 
-    // Validate product exists
-    const product = await ProductModel.findById(id);
+
+}))
+
+
+productRouter.get("/allproduct", catchAsyncError(async(req, res, next)=>{
+      
+     let allProduct = await ProductModel.find()
+     res.status(200).json({status:true,message:allProduct})
+}))
+
+productRouter.get("/individualproduct/:id", catchAsyncError(async(req, res, next)=>{
+    let id=req.params.id
+    let product = await ProductModel.findById(id)
+    res.status(200).json({status:true,message:product})
+}))
+
+
+
+
+
+productRouter.delete("/delete/:id",catchAsyncError(async(req,res,next)=>{
+    console.log("kjmk")
+       let id=req.params.id
+       if(!id){
+         return next(new Errorhadler("id is not passed",400))
+       }
+       if (!mongoose.Types.ObjectId.isValid(id)) {
+        return next(new Errorhadler("Invalid ObjectId", 400));
+       }
+       const deletedProduct = await ProductModel.findByIdAndDelete(id);
+       if (!deletedProduct) {
+           return next(new Errorhadler("Product not found", 404));
+       }
+       res.status(200).json({status:true,message:"deleted successfully"})
+       
+}))
+
+
+
+productRouter.put("/update/:id",productUpload.array("images",10),catchAsyncError(async(req,res,next)=>{
+    
+    let id=req.params.id
+    if(!id){
+      return next(new Errorhadler("id is not passed",400))
+    }
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+     return next(new Errorhadler("Invalid ObjectId", 400));
+    }
+    
+    let { email,name, description,category,tags,price,stock,images} = req.body;
+    const imagesArr =req.files.map((file)=>path.basename(file.path));
+    console.log(images,imagesArr)
+    if(!images){
+        images=[]
+    }
+    else{
+        images =Array.isArray(images)?images:[images]
+    }
+    console.log(images,imagesArr,"88")
+    const updated =await ProductModel.findByIdAndUpdate(id,{ email,name, description,category,tags,price,stock,images:[...imagesArr,...images]},{new:true})
+    res.status(200).json({status:true,message:"updated successfully",data:updated})
+    
+}))
+
+
+productRouter.post('/cart',auth, catchAsyncError(async (req, res, next) => {
+    let update=req.query.update
+    console.log(update)
+    const {productId, quantity } = req.body;
+    let userId=req.user_id 
+    if (!userId) {
+        return next(new Errorhadler("UserID isrequired", 400));
+    }
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+        return next(new Errorhadler("Invalid productId", 400));
+    }
+
+    if (!quantity || quantity < 1) {
+        return next(new Errorhadler("Quantity must be at least 1", 400));
+    }
+    const user = await UserModel.findById(userId);
+    if (!user) {
+        return next(new Errorhadler("User not found", 404));
+    }
+    const product = await ProductModel.findById(productId);
     if (!product) {
-      return next(new Errorhadler("Product not found", 404));
+        return next(new Errorhadler("Product not found", 404));
+    }
+     
+    // for updating the quantity
+    if(update){
+        const cartItemIndex = user.cart.findIndex(
+            (item) => item.productId.toString() === productId
+        );
+        if (cartItemIndex > -1) {
+            user.cart[cartItemIndex].quantity = quantity;
+            await user.save();
+
+           return res.status(200).json({
+                 status: true,
+                 message: "Cart updated successfully",
+                cart: user.cart,
+            });
+        } 
     }
 
-    // Validate user owns the product
-    if (product.email !== req.user.email) {
-      return next(new Errorhadler("Unauthorized to update this product", 403));
-    }
-
-    // Update product data
-    const updateData = {
-      name: name || product.name,
-      description: description || product.description,
-      category: category || product.category,
-      tags: tags ? (typeof tags === 'string' ? JSON.parse(tags) : tags) : product.tags,
-      price: price || product.price,
-      stock: stock || product.stock,
-    };
-
-    // Only update images if new ones are provided
-    if (images && images.length > 0) {
-      updateData.images = images;
-    }
-
-    const updatedProduct = await ProductModel.findByIdAndUpdate(
-      id,
-      updateData,
-      { new: true, runValidators: true }
+    const cartItemIndex = user.cart.findIndex(
+        (item) => item.productId.toString() === productId
     );
 
-    res.status(200).json({
-      success: true,
-      product: updatedProduct,
-    });
-  })
-);
-
-productRouter.delete(
-  "/deleteProduct/:id", 
-  isAuthenticatedUser,
-  catchAsyncError(async (req, res, next) => {
-    const { id } = req.params;
-
-    // Validate product exists
-    const product = await ProductModel.findById(id);
-    if (!product) {
-      return next(new Errorhadler("Product not found", 404));
+    if (cartItemIndex > -1) {
+        user.cart[cartItemIndex].quantity += quantity;
+    } else {
+        user.cart.push({ productId, quantity });
     }
 
-    // Validate user owns the product
-    if (product.email !== req.user.email) {
-      return next(new Errorhadler("Unauthorized to delete this product", 403));
-    }
-
-    await ProductModel.findByIdAndDelete(id);
+    await user.save();
 
     res.status(200).json({
-      success: true,
-      message: "Product deleted successfully"
+        status: true,
+        message: "Cart updated successfully",
+        cart: user.cart,
     });
 }));
 
-module.exports = productRouter;
+productRouter.get("/cart",auth,catchAsyncError(async(req,res,next)=>{
+     
+    let userID=req.user_id
+    if(!userID){
+      return next(new Errorhadler("user id is required", 404));
+    }
+    if (!mongoose.Types.ObjectId.isValid(userID)) {
+      return next(new Errorhadler("Invalid userId", 400));
+    }
+
+    let cart=await UserModel.findById(userID).populate({
+       path:"cart.productId",
+       model:"Product"
+    })
+    
+    res.status(200).json({status:true,message:cart})
+
+}))
+
+
+
+
+module.exports =productRouter;

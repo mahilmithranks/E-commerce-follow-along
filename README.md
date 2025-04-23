@@ -1007,3 +1007,42 @@ All errors are returned in a consistent format:
 ```
 
 ---
+#  Milestone 23: Order Placement and Address Selection
+
+This milestone introduces a key enhancement to the shopping experience by enabling users to place orders and select from their saved delivery addresses during checkout.
+
+---
+
+##  Features Implemented
+
+### 1. **Order Placement Flow**
+- Added a `Place Order` button to the Cart page.
+- Initiates the checkout process directly from the cart.
+
+### 2. **Select Address Page**
+- New interface allowing users to select a delivery address from their saved list.
+- Designed for usability and quick navigation.
+
+---
+
+##  Backend Integration
+
+### Endpoint: `GET /api/user/addresses`
+- **Description**: Retrieves all saved addresses for the authenticated user.
+- **Authentication**: Required (JWT-based)
+- **Response**:
+  ```json
+  {
+    "addresses": [
+      {
+        "id": "address_1",
+        "fullName": "John Doe",
+        "street": "123 Main Street",
+        "city": "Springfield",
+        "state": "IL",
+        "zipCode": "62701",
+        "country": "USA"
+      },
+      ...
+    ]
+  }

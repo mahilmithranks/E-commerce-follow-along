@@ -1,37 +1,41 @@
 const express = require("express");
-const cors = require('cors');
-const cookieParser = require('cookie-parser');
-const path = require('path');
+const cors = require("cors")
 const app = express();
-
-// CORS configuration
-app.use(cors({
-    origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
-    allowedHeaders: ["Content-Type", "Authorization", "Accept", "Origin", "X-Requested-With"]
-}));
-
-// Body parsing middleware
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+const ErrorMiddleware= require("./middleware/error")
+const path=require("path")
+const cookieParser =require("cookie-parser")
+app.use(cookieParser())
 
-// Import routes
-const errMiddleware = require("./middleware/error");
-const productRoute = require("./controllers/productroute");
-const userRoute = require("./controllers/userRoute");
-const cartRoute = require("./routes/cartRoute");
+app.use(cors({
+  origin:"http://localhost:5173",
+  credentials:true
+}))
 
-// Static file serving for uploads
-app.use("/upload", express.static(path.join(__dirname, "upload")));
+const {userRoute} = require('./controllers/userRoute');
 
-// Routes
-app.use("/api/products", productRoute);
-app.use("/api/user", userRoute);
-app.use("/api/cart", cartRoute);
+const productRouter = require("./controllers/productRoutes");
 
-// Error handling middleware
-app.use(errMiddleware);
+
+
+app.get("/test", async (req, res) => {
+  res.send("hello.....");
+});
+
+
+console.log(path.join(__dirname, 'uploadproducts'))
+
+
+app.use('/profile-photo', express.static(path.join(__dirname, 'upload')));
+
+app.use('/products-photo', express.static(path.join(__dirname, 'uploadproducts')));
+
+app.use("/user",userRoute)
+app.use("/product", productRouter);
+
+
+
+
+app.use(ErrorMiddleware)
 
 module.exports = { app };

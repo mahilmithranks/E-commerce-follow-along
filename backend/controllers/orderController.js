@@ -125,12 +125,17 @@ export const getOrderById = async (req, res, next) => {
   }
 };
 
-// Get all orders for a user
-export const getUserOrders = async (req, res, next) => {
+// Get all orders for a user by email
+export const getUserOrdersByEmail = async (req, res, next) => {
   try {
-    const userId = req.user.id;
+    const { email } = req.params;
+    const user = await UserModel.findOne({ email });
 
-    const orders = await OrderModel.find({ user: userId }).sort("-createdAt");
+    if (!user) {
+      return next(new Errorhadler("User not found", 404));
+    }
+
+    const orders = await OrderModel.find({ user: user._id }).sort("-createdAt");
 
     res.status(200).json({
       success: true,

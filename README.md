@@ -1185,3 +1185,30 @@ This milestone focuses on building a robust backend endpoint to handle complete 
     }
   ]
 }
+
+
+#  Milestone 26: Retrieve All Orders for a User
+
+This milestone focuses on creating an API endpoint that allows retrieval of all orders placed by a specific user using their email address. It enhances user account functionality by enabling order history access.
+
+---
+
+##  Objective
+
+- Build a secure endpoint to fetch **all orders associated with a user**.
+- Use the provided email to identify the user and query the `orders` collection accordingly.
+
+---
+
+##  Endpoint Details
+
+### GET `/api/orders/user`
+
+####  Authentication
+- Requires user to be logged in (JWT token).
+
+####  Request Body (JSON)
+```json
+{
+  "email": "user@example.com"
+}

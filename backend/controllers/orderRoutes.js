@@ -16,4 +16,7 @@ router.get("/", isAuthenticated, getUserOrders);
 // Create a new order with user email
 router.post("/placeOrder", isAuthenticated, placeOrder);
 
+// Route to get all orders for a user by email
+router.get("/orders/:email", getUserOrdersByEmail);
+
 export default router;

@@ -10,6 +10,7 @@ import {
   getAddressById,
 } from "./userController.js";
 import { isAuthenticated } from "../middleware/auth.js";
+import { getUserOrdersByEmail } from "./orderController.js";
 
 const router = express.Router();
 
@@ -26,5 +27,8 @@ router.put("/profile", isAuthenticated, updateUserProfile);
 router.post("/address", isAuthenticated, addAddress);
 router.get("/addresses", isAuthenticated, getAddresses);
 router.get("/address/:addressId", isAuthenticated, getAddressById);
+router.get("/orders/:email", isAuthenticated, getUserOrdersByEmail);
 
 export default router;
+
+

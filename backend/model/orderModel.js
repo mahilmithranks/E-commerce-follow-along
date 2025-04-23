@@ -40,6 +40,23 @@ const orderSchema = mongoose.Schema(
       default: "Processing",
       enum: ["Processing", "Shipped", "Delivered", "Cancelled"],
     },
+    paymentMethod: {
+      type: String,
+      required: true,
+      enum: ["COD", "PayPal"],
+    },
+    paymentStatus: {
+      type: String,
+      required: true,
+      default: "Pending",
+      enum: ["Pending", "Completed", "Failed"],
+    },
+    paymentResult: {
+      id: { type: String },
+      status: { type: String },
+      update_time: { type: String },
+      email_address: { type: String },
+    },
   },
   {
     timestamps: true,

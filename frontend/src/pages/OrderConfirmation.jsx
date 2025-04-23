@@ -9,6 +9,7 @@ const OrderConfirmation = () => {
     products: [],
     address: null,
     total: 0,
+    paymentMethod: "COD",
   });
   const [placingOrder, setPlacingOrder] = useState(false);
   const navigate = useNavigate();
@@ -70,6 +71,7 @@ const OrderConfirmation = () => {
         "http://localhost:8080/api/orders",
         {
           addressId: orderDetails.address._id,
+          paymentMethod: orderDetails.paymentMethod,
         },
         { withCredentials: true }
       );
@@ -160,6 +162,43 @@ const OrderConfirmation = () => {
           <div className="flex justify-between py-2 font-bold text-lg mt-2">
             <span>Total</span>
             <span>${orderDetails.total.toFixed(2)}</span>
+          </div>
+        </div>
+
+        {/* Payment Method Selection */}
+        <div className="bg-white p-6 rounded-lg shadow mb-6">
+          <h2 className="text-xl font-semibold mb-4">Payment Method</h2>
+          <div className="space-y-4">
+            <label className="flex items-center space-x-3">
+              <input
+                type="radio"
+                value="COD"
+                checked={orderDetails.paymentMethod === "COD"}
+                onChange={(e) =>
+                  setOrderDetails({
+                    ...orderDetails,
+                    paymentMethod: e.target.value,
+                  })
+                }
+                className="form-radio h-5 w-5 text-green-600"
+              />
+              <span>Cash on Delivery (COD)</span>
+            </label>
+            <label className="flex items-center space-x-3">
+              <input
+                type="radio"
+                value="PayPal"
+                checked={orderDetails.paymentMethod === "PayPal"}
+                onChange={(e) =>
+                  setOrderDetails({
+                    ...orderDetails,
+                    paymentMethod: e.target.value,
+                  })
+                }
+                className="form-radio h-5 w-5 text-green-600"
+              />
+              <span>PayPal</span>
+            </label>
           </div>
         </div>
 

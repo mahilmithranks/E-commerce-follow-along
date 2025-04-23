@@ -1,6 +1,6 @@
 import OrderModel from "../model/orderModel.js";
 import { UserModel } from "../model/userModel.js";
-import { ProductModel } from "../model/productModel.js";
+import ProductModel from "../model/productModel.js";
 import errorUtils from "../utils/errorHandler.js";
 const { ErrorHandler } = errorUtils;
 

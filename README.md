@@ -1361,3 +1361,85 @@ In this milestone, we enhance the **My Orders** page by adding a **Cancel Order*
 {
   "message": "Order successfully canceled."
 }
+##  Milestone 30: Online Payment Integration with PayPal
+
+This milestone implements **PayPal online payment integration** for the e-commerce platform, enabling users to make secure payments via PayPal and other payment methods like credit and debit cards.
+
+---
+
+###  Objective
+
+- Integrate PayPal as a payment method in the e-commerce checkout flow.
+- Use the **PayPal API** with the client key created in the PayPal sandbox account to enable online payments.
+- Use the **react-paypal-js** package to display PayPal and card payment options on the frontend.
+
+---
+
+###  Features Implemented
+
+- **PayPal Integration**: Enabled PayPal checkout functionality on the frontend.
+- **react-paypal-js**: Utilized the `PayPalScriptProvider` component to display PayPal's payment methods (credit/debit cards).
+- **Sandbox Mode**: Integrated PayPal's sandbox environment for testing payment functionality.
+- **Secure Payment Flow**: Payment handling, including success and failure callbacks, to properly manage order completion and payment verification.
+
+---
+
+###  Steps for Implementation
+
+#### 1. **Set Up PayPal Developer Account**
+- Create a PayPal developer account if you haven't already.
+- Obtain your **Client ID** from PayPal’s sandbox account. This will be used for API calls to handle payment.
+
+#### 2. **Install `react-paypal-js` Package**
+   Run the following command to install the `react-paypal-js` package:
+   
+   ```bash
+   npm install @paypal/react-paypal-js
+
+import { PayPalScriptProvider } from "@paypal/react-paypal-js";
+import Checkout from './Checkout'; // Your checkout component
+
+function App() {
+  return (
+    <PayPalScriptProvider options={{ "client-id": "YOUR_PAYPAL_CLIENT_ID" }}>
+      <Checkout />
+    </PayPalScriptProvider>
+  );
+}
+
+export default App;
+
+
+import { PayPalButtons } from "@paypal/react-paypal-js";
+
+function Checkout() {
+  return (
+    <div>
+      <h2>Complete Your Purchase</h2>
+      <PayPalButtons
+        style={{ layout: 'vertical' }}
+        createOrder={(data, actions) => {
+          return actions.order.create({
+            purchase_units: [{
+              amount: {
+                value: '100.00',  // Amount for the payment
+              },
+            }],
+          });
+        }}
+        onApprove={(data, actions) => {
+          return actions.order.capture().then(details => {
+            alert("Payment completed by " + details.payer.name.given_name);
+            // Handle successful payment (e.g., update order status, redirect)
+          });
+        }}
+        onError={(err) => {
+          console.error("Payment Error", err);
+          // Handle payment failure
+        }}
+      />
+    </div>
+  );
+}
+
+export default Checkout;

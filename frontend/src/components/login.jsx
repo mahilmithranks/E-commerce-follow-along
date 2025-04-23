@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
 function Login(props) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [hide, setHide] = useState(true);
   const [error, setError] = useState("");
@@ -18,7 +20,7 @@ function Login(props) {
   };
 
   const handleForm = (e) => {
-    setError("")
+    setError("");
     setData({ ...data, [e.target.name]: e.target.value });
   };
 
@@ -31,19 +33,23 @@ function Login(props) {
 
     try {
       await axios
-        .post("http://localhost:8080/user/login", {
-          email,
-          password,
-        }, {
-          withCredentials: true   
-        })
+        .post(
+          "http://localhost:8080/user/login",
+          {
+            email,
+            password,
+          },
+          {
+            withCredentials: true,
+          }
+        )
         .then((response) => {
-          console.log(response,"888")
+          console.log(response, "888");
+          dispatch(setEmail(email));
           navigate("/");
         });
 
       console.log("Login successful");
-      
     } catch (error) {
       console.log(error);
       setError(error.response.data.message);
@@ -64,7 +70,10 @@ function Login(props) {
             </div>
           )}
 
-          <label htmlFor="email" className="block text-gray-600 font-medium mb-2">
+          <label
+            htmlFor="email"
+            className="block text-gray-600 font-medium mb-2"
+          >
             Email address
           </label>
           <input
@@ -76,7 +85,10 @@ function Login(props) {
             className="w-full p-3 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
 
-          <label htmlFor="password" className="block text-gray-600 font-medium mb-2">
+          <label
+            htmlFor="password"
+            className="block text-gray-600 font-medium mb-2"
+          >
             Password
           </label>
           <div className="relative">
@@ -93,18 +105,16 @@ function Login(props) {
               onClick={handleHide}
               className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
             >
-              {hide ? (
-                <FaRegEye size={20} />
-              ) : (
-                <FaRegEyeSlash size={20} />
-              )}
+              {hide ? <FaRegEye size={20} /> : <FaRegEyeSlash size={20} />}
             </button>
           </div>
 
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center">
               <input type="checkbox" id="remember" className="mr-2" />
-              <label htmlFor="remember" className="text-gray-600">Remember me</label>
+              <label htmlFor="remember" className="text-gray-600">
+                Remember me
+              </label>
             </div>
             <a href="#" className="text-blue-600 hover:underline text-sm">
               Forgot password?

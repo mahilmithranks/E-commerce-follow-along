@@ -1210,24 +1210,22 @@ This milestone focuses on building a robust backend endpoint to handle complete 
 }
 
 
-# 🛒 E-Commerce Platform – Order Management Module
 
-This module enhances the e-commerce platform by introducing order history functionality and a corresponding frontend interface, enabling users to view and track their past purchases.
 
 ---
 
-## ✅ Milestone 26: User Order History API
+##  Milestone 26: User Order History API
 
 This milestone implements a robust API endpoint for retrieving a user's complete order history, enhancing the account management capabilities.
 
-### 🔑 Key Features
+###  Key Features
 
 - **Secure Order Retrieval**: Fetch all orders associated with authenticated users
 - **Email-based Identification**: Efficiently query orders using user email
 - **Comprehensive Order Details**: Returns product, address, status, and timestamps
 - **JWT Authentication**: Ensures access is restricted to logged-in users
 
-### 📡 API Specification
+###  API Specification
 
 #### Endpoint
 `POST /api/orders/user`
@@ -1260,20 +1258,19 @@ This milestone implements a robust API endpoint for retrieving a user's complete
     }
   ]
 }
-
-## ✅ Milestone 27: My Orders Page (Frontend Integration)
+## Milestone 27: My Orders Page (Frontend Integration)
 
 This milestone adds a **My Orders** page to the frontend of the e-commerce platform, allowing users to view their entire order history retrieved via the API created in Milestone 26.
 
 ---
 
-### 🎯 Objective
+###  Objective
 
 To provide users with an easy way to review all their past orders using a dedicated page connected to the backend via API.
 
 ---
 
-### 🛠️ Features Implemented
+###  Features Implemented
 
 - **My Orders Page**: A new page created using React that displays a list of all user orders.
 - **API Integration**: Fetches orders using the `POST /api/orders/user` endpoint with the user's email and JWT token.
@@ -1282,7 +1279,7 @@ To provide users with an easy way to review all their past orders using a dedica
 
 ---
 
-### 📡 API Call Sample
+###  API Call Sample
 
 ```js
 const response = await axios.post('/api/orders/user', {
@@ -1326,13 +1323,13 @@ In this milestone, we enhance the **My Orders** page by adding a **Cancel Order*
   "orderId": "order_id_123"
 }
 
-## ✅ Milestone 28: Cancel Order Feature
+##  Milestone 28: Cancel Order Feature
 
 In this milestone, we enhance the **My Orders** page by adding a **Cancel Order** button to each order. If an order is already canceled, the button will not appear. Additionally, a backend API endpoint is implemented to handle the cancellation of orders.
 
 ---
 
-### 🎯 Objective
+###  Objective
 
 - Add a **Cancel Order** button to each order in the **My Orders** page.
 - Ensure the button is only visible if the order status is not already "Canceled."
@@ -1340,7 +1337,7 @@ In this milestone, we enhance the **My Orders** page by adding a **Cancel Order*
 
 ---
 
-### 🛠️ Features Implemented
+###  Features Implemented
 
 - **Cancel Order Button**: A button is added to each order on the **My Orders** page, allowing users to cancel their orders.
 - **Conditional Button Display**: The cancel button is hidden if the order status is already "Canceled."
@@ -1348,7 +1345,7 @@ In this milestone, we enhance the **My Orders** page by adding a **Cancel Order*
 
 ---
 
-### 📡 API Specification
+###  API Specification
 
 #### Endpoint
 `POST /api/orders/cancel`
@@ -1444,13 +1441,13 @@ function Checkout() {
 
 export default Checkout;
 
-## ✅ Milestone 31: Implementing Redux for Global State Management
+##  Milestone 31: Implementing Redux for Global State Management
 
 This milestone integrates **Redux** into the React application to manage the global state for the user's email address. Redux helps to maintain the email state globally, making it accessible across all components within the app.
 
 ---
 
-### 🎯 Objective
+###  Objective
 
 - Integrate Redux into the application.
 - Store the user's email in the global state and make it accessible across the app.
@@ -1458,7 +1455,7 @@ This milestone integrates **Redux** into the React application to manage the glo
 
 ---
 
-### 🛠️ Features Implemented
+###  Features Implemented
 
 - **react-redux Integration**: Installed the `react-redux` package to connect Redux with the React application.
 - **Global State Management**: Stored the user's email address in the global state.
@@ -1467,7 +1464,7 @@ This milestone integrates **Redux** into the React application to manage the glo
 
 ---
 
-### 🛠️ Steps for Implementation
+###  Steps for Implementation
 
 #### 1. **Install `react-redux` and `redux` Packages**
    Install the required packages to integrate Redux into your React app:
@@ -1518,3 +1515,87 @@ ReactDOM.render(
   </Provider>,
   document.getElementById('root')
 );
+##  Milestone 32: Using Redux for Global State in Login Page
+
+This milestone focuses on using **Redux** to manage the user's email across different pages. The user's email is stored in the global state on the **Login page**, and other pages can access the email using the **`useSelector`** hook.
+
+---
+
+###  Objective
+
+- Store the user's email in the global state upon successful login using Redux's `dispatch` method.
+- Access the stored email across different pages using the `useSelector` hook to manage global state more effectively.
+
+---
+
+###  Features Implemented
+
+- **Dispatch Email on Login**: On the Login page, the user's email is dispatched to the global state using Redux.
+- **Global State Access**: Other pages can access the user's email using the `useSelector` hook, making the email available across the app.
+- **Redux for Authentication**: Used Redux to manage authentication state for the user.
+
+---
+
+###  Steps for Implementation
+
+#### 1. **Dispatch Email on Successful Login**
+
+In the `Login` component, after the user successfully logs in, dispatch the email to the global Redux state:
+
+```js
+// src/pages/Login.js
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { setEmail } from '../store/userActions';  // Path to your userActions.js
+
+const Login = () => {
+  const [email, setEmailInput] = useState('');
+  const dispatch = useDispatch();
+
+  const handleLogin = () => {
+    // Dispatch the email to Redux store
+    dispatch(setEmail(email));
+
+    // Redirect to home or dashboard page (optional)
+  };
+
+  return (
+    <div>
+      <h2>Login</h2
+// src/pages/Home.js
+import React from 'react';
+import { useSelector } from 'react-redux';
+
+const Home = () => {
+  const userEmail = useSelector((state) => state.email);  // Access email from Redux store
+
+  return (
+    <div>
+      <h2>Welcome, {userEmail ? userEmail : 'Guest'}!</h2>
+    </div>
+  );
+};
+
+export default Home;
+// store/userActions.js
+export const setEmail = (email) => {
+  return {
+    type: 'SET_EMAIL',
+    payload: email,
+  };
+};
+// store/userReducer.js
+const initialState = {
+  email: '',
+};
+
+const userReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case 'SET_EMAIL':
+      return { ...state, email: action.payload };
+    default:
+      return state;
+  }
+};
+
+export default userReducer;
